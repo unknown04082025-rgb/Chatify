@@ -1,4 +1,4 @@
-import type { User, Message, Chat, Story, VaultItem, Memory, AtithiRequest, LoginActivity } from './types';
+import type { User, Message, Chat, Story, VaultItem, Memory, AtithiRequest, LoginActivity, FriendRequest } from './types';
 
 export const MOCK_USERS: User[] = [
   {
@@ -60,21 +60,24 @@ export const MOCK_USERS: User[] = [
     lastSeen: 'now',
     device: 'Chrome on macOS',
     bio: 'Exclusive member.',
+  }
+];
+
+export const MOCK_FRIEND_REQUESTS: FriendRequest[] = [
+  {
+    id: 'req-f-1',
+    senderId: 'user-2',
+    receiverId: 'user-1',
+    status: 'accepted',
+    timestamp: '2024-02-21T10:00:00Z'
   },
   {
-    id: 'admin-1',
-    username: 'chatify_admin',
-    email: 'admin@chatify.io',
-    displayName: 'System Admin',
-    avatar: '🛡️',
-    type: 'admin',
-    status: 'available',
-    joinedDate: '2023-12-01',
-    loginCount: 100,
-    emailVerified: true,
-    lastSeen: 'now',
-    device: 'Chrome on Ubuntu',
-  },
+    id: 'req-f-2',
+    senderId: 'user-3',
+    receiverId: 'user-1',
+    status: 'pending',
+    timestamp: new Date().toISOString()
+  }
 ];
 
 export const MOCK_MESSAGES: Message[] = [

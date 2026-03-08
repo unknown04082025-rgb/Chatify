@@ -1,19 +1,50 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Play, Pause, Volume2, VolumeX, Maximize, Monitor, Mic, SkipForward,
-  SkipBack, Users, Upload, Plus, Settings
+  SkipBack, Users, Upload, Plus, Settings, Loader2
 } from 'lucide-react';
 
 export default function WatchPage() {
   const [inRoom, setInRoom] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [screenSharing, setScreenSharing] = useState(false);
   const [audioSharing, setAudioSharing] = useState(false);
   const [voiceChat, setVoiceChat] = useState(false);
-  const [progress, setProgress] = useState(30);
+  const [currentTime, setCurrentTime] = useState(1934); // Start at 32:14
+  
+  const totalTime = 6450; // 1:47:30
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (playing) {
+      interval = setInterval(() => {
+        setCurrentTime(t => Math.min(t + speed, totalTime));
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [playing, speed]);
+
+  const handleJoin = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setInRoom(true);
+    }, 1200);
+  };
+
+  const formatTime = (secs: number) => {
+    const h = Math.floor(secs / 3600);
+    const m = Math.floor((secs % 3600) / 60);
+    const s = Math.floor(secs % 60);
+    if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const progressPercent = (currentTime / totalTime) * 100;
 
   return (
     <div style={{ padding: '24px', maxWidth: '960px', margin: '0 auto' }}>
@@ -70,9 +101,9 @@ export default function WatchPage() {
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '17px', fontWeight: 700, marginBottom: '8px' }}>Join Room</div>
               <input className="input-field" placeholder="Enter room code..." style={{ textAlign: 'center', fontSize: '13px', marginBottom: '10px' }} id="room-code-input" />
-              <button className="btn-primary" style={{ width: '100%', fontSize: '13px' }}
-                onClick={() => setInRoom(true)} id="join-room-btn">
-                Join Room
+              <button className="btn-primary" style={{ width: '100%', fontSize: '13px', opacity: loading ? 0.7 : 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+                onClick={handleJoin} id="join-room-btn" disabled={loading}>
+                {loading ? <Loader2 size={16} className="animate-spin" /> : 'Join Room'}
               </button>
             </div>
           </div>
@@ -150,22 +181,23 @@ export default function WatchPage() {
               cursor: 'pointer', position: 'relative',
             }} onClick={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
-              setProgress(((e.clientX - rect.left) / rect.width) * 100);
+              const newPercent = (e.clientX - rect.left) / rect.width;
+              setCurrentTime(newPercent * totalTime);
             }}>
               <div style={{
-                height: '100%', width: `${progress}%`,
+                height: '100%', width: `${progressPercent}%`,
                 background: 'var(--gradient-primary)', borderRadius: '5px',
-                transition: 'width 0.1s',
+                transition: playing ? 'width 1s linear' : 'width 0.1s',
               }} />
               <div style={{
-                position: 'absolute', top: '50%', left: `${progress}%`,
+                position: 'absolute', top: '50%', left: `${progressPercent}%`,
                 transform: 'translate(-50%, -50%)',
                 width: '12px', height: '12px', borderRadius: '50%',
                 background: 'white', boxShadow: '0 0 6px rgba(124,58,237,0.5)',
               }} />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)', marginTop: '6px' }}>
-              <span>32:14</span><span>1:47:30</span>
+              <span>{formatTime(currentTime)}</span><span>{formatTime(totalTime)}</span>
             </div>
           </div>
 

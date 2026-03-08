@@ -8,8 +8,9 @@ import { formatRelativeTime, formatMessageTime } from '@/lib/crypto';
 import {
   Search, Phone, Video, MoreVertical, Send, Mic, Camera, MapPin,
   Zap, Lock, Trash2, Eye, Image, Smile, Hash, ChevronLeft,
-  MicOff, Square,
+  MicOff, Square, Play, Pause, PhoneIncoming
 } from 'lucide-react';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 // ─── Typing Indicator ────────────────────────────────
 function TypingIndicator({ isTyping }: { isTyping: boolean }) {
@@ -31,12 +32,13 @@ function TypingIndicator({ isTyping }: { isTyping: boolean }) {
 }
 
 // ─── Wave bars for voice ──────────────────────────────
-function VoiceWaveform({ bars = 8 }: { bars?: number }) {
+function VoiceWaveform({ bars = 8, isPlaying = false }: { bars?: number, isPlaying?: boolean }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '3px', height: '24px' }}>
       {Array.from({ length: bars }).map((_, i) => (
         <div key={i} className="wave-bar" style={{
           height: `${Math.random() * 16 + 6}px`,
+          animationPlayState: isPlaying ? 'running' : 'paused',
           animationDelay: `${i * 0.1}s`,
           animationDuration: `${0.4 + Math.random() * 0.3}s`,
         }} />
@@ -45,14 +47,164 @@ function VoiceWaveform({ bars = 8 }: { bars?: number }) {
   );
 }
 
+function VoiceMessage({ content, isSelf }: { content: string, isSelf: boolean }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  
+  // Extract duration from "0:XX" format
+  const durationMatch = content.match(/0:(\d+)/);
+  const totalSeconds = durationMatch ? parseInt(durationMatch[1]) : 15;
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setProgress(p => {
+          if (p >= totalSeconds) {
+            setIsPlaying(false);
+            return 0;
+          }
+          return p + 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying, totalSeconds]);
+
+  const togglePlay = () => setIsPlaying(!isPlaying);
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <button onClick={togglePlay} style={{
+        background: isSelf ? 'rgba(255,255,255,0.2)' : 'var(--gradient-primary)',
+        border: 'none', borderRadius: '50%', width: '28px', height: '28px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white',
+        flexShrink: 0
+      }}>
+        {isPlaying ? <Square size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" style={{ marginLeft: '2px' }} />}
+      </button>
+      <VoiceWaveform bars={10} isPlaying={isPlaying} />
+      <span style={{ fontSize: '12px', opacity: 0.8, minWidth: '35px' }}>
+        0:{String(isPlaying ? progress : totalSeconds).padStart(2, '0')}
+      </span>
+    </div>
+  );
+}
+
+function AfterViewMessage({ content }: { content: string }) {
+  const [state, setState] = useState<'hidden' | 'confirming' | 'visible'>('hidden');
+
+  if (state === 'hidden') {
+    return (
+      <div 
+        onClick={() => setState('confirming')}
+        style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '4px' }}
+      >
+        <Eye size={16} />
+        <span style={{ fontSize: '14px', fontStyle: 'italic', opacity: 0.8 }}>View Disappearing Message</span>
+        <span style={{ fontSize: '10px', opacity: 0.6, background: 'rgba(0,0,0,0.2)', padding: '2px 6px', borderRadius: '6px' }}>Tap to view</span>
+      </div>
+    );
+  }
+
+  if (state === 'confirming') {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <span style={{ fontSize: '14px', fontWeight: 600 }}>Message will disappear after viewing. View now?</span>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={() => setState('visible')} style={{ padding: '6px 12px', background: 'var(--gradient-primary)', border: 'none', borderRadius: '6px', color: 'white', cursor: 'pointer', fontSize: '12px' }}>Yes</button>
+          <button onClick={() => setState('hidden')} style={{ padding: '6px 12px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', color: 'white', cursor: 'pointer', fontSize: '12px' }}>No</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <Eye size={13} style={{ opacity: 0.7 }} />
+        <span style={{ fontSize: '14px' }}>{content}</span>
+      </div>
+      <span style={{ fontSize: '10px', color: '#f59e0b' }}>⚠️ Will disappear when you leave chat</span>
+    </div>
+  );
+}
+
+function SnapMessage({ content }: { content: string }) {
+  const [state, setState] = useState<'hidden' | 'viewing' | 'viewed'>('hidden');
+  const [timeLeft, setTimeLeft] = useState(5);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (state === 'viewing') {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            setState('viewed');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [state]);
+
+  if (state === 'viewed') {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.5 }}>
+        <Zap size={13} />
+        <span style={{ fontSize: '14px', fontStyle: 'italic' }}>Snap viewed</span>
+      </div>
+    );
+  }
+
+  if (state === 'viewing') {
+    return (
+      <div style={{
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+        background: '#000', zIndex: 9999, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center'
+      }}>
+        <div style={{ position: 'absolute', top: '20px', right: '20px', color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
+          {timeLeft}s
+        </div>
+        <div style={{
+          width: '90%', maxWidth: '400px', height: '80%', borderRadius: '20px',
+          background: 'linear-gradient(135deg, #f59e0b, #ec4899)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 0 40px rgba(245,158,11,0.5)', fontSize: '64px',
+          padding: '20px', textAlign: 'center', color: 'white', flexDirection: 'column', gap: '20px'
+        }}>
+          <div>📸</div>
+          <div style={{ fontSize: '24px', fontWeight: 600 }}>{content}</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      onClick={() => setState('viewing')}
+      style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '4px' }}
+    >
+      <Zap size={16} color="#f59e0b" />
+      <span style={{ fontSize: '14px', fontStyle: 'italic', opacity: 0.8, color: '#f59e0b' }}>New Snap</span>
+      <span style={{ fontSize: '10px', opacity: 0.6, background: 'rgba(0,0,0,0.2)', padding: '2px 6px', borderRadius: '6px' }}>Tap to view</span>
+    </div>
+  );
+}
+
 export default function ChatsPage() {
   const router = useRouter();
-  const { chats, messages, activeChatId, setActiveChat, sendMessage, setTyping, typingUsers, currentUser, startCall } = useAppStore();
+  const { chats, messages, activeChatId, setActiveChat, sendMessage, setTyping, typingUsers, currentUser, startCall, receiveCall, friendRequests } = useAppStore();
   const [inputText, setInputText] = useState('');
   const [msgType, setMsgType] = useState<'normal' | 'after-view' | 'timed-delete'>('normal');
   const [isRecording, setIsRecording] = useState(false);
   const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [search, setSearch] = useState('');
+  const [confirmCall, setConfirmCall] = useState<{ partnerId: string, type: 'voice' | 'video' } | null>(null);
+  const [confirmClear, setConfirmClear] = useState<string | null>(null); // used if they want to clear chat
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -87,7 +239,6 @@ export default function ChatsPage() {
     setMsgType('normal');
     // Simulate friend reply after delay
     setTimeout(() => {
-      const replies = ['Got it! 😊', 'That\'s great!', '🔥🔥🔥', 'Sure thing!', 'Interesting...', '👍'];
       setTyping(activeChatId!, true);
       setTimeout(() => {
         setTyping(activeChatId!, false);
@@ -95,9 +246,19 @@ export default function ChatsPage() {
     }, 500);
   };
 
+  const handleSendSnap = () => {
+    if (!activeChatId) return;
+    sendMessage(activeChatId, 'View this carefully!', 'snap');
+  };
+
+  const acceptedFriendsIds = currentUser ? friendRequests
+    .filter(r => r.status === 'accepted' && (r.senderId === currentUser.id || r.receiverId === currentUser.id))
+    .map(r => r.senderId === currentUser.id ? r.receiverId : r.senderId) : [];
+
   const filteredChats = chats.filter((c) => {
     const other = getOtherUser(c);
-    return other?.username.includes(search) || other?.displayName.toLowerCase().includes(search.toLowerCase());
+    if (!other || !acceptedFriendsIds.includes(other.id)) return false;
+    return other.username.includes(search) || other.displayName.toLowerCase().includes(search.toLowerCase());
   });
 
   const msgTypeConfig = {
@@ -106,8 +267,41 @@ export default function ChatsPage() {
     'timed-delete': { icon: <Trash2 size={14} />, label: 'Delete in 3h', color: '#ef4444' },
   };
 
+  const executeCall = () => {
+    if (confirmCall) {
+      startCall(confirmCall.partnerId, confirmCall.type);
+      setConfirmCall(null);
+    }
+  };
+
+  const handleClearChat = () => {
+    if (confirmClear && activeChatId) {
+      // In a real app we'd dispatch a clear action to the store, we can just mock it or add it
+      useAppStore.setState(s => ({
+        messages: { ...s.messages, [activeChatId]: [] }
+      }));
+      setConfirmClear(null);
+    }
+  };
+
   return (
     <div style={{ display: 'flex', height: 'calc(100vh - var(--nav-height))', overflow: 'hidden' }}>
+      <ConfirmDialog
+        isOpen={confirmCall !== null}
+        title={`Start ${confirmCall?.type === 'video' ? 'Video' : 'Voice'} Call`}
+        message="Are you sure you want to start this call? This is a two-step verification."
+        onConfirm={executeCall}
+        onCancel={() => setConfirmCall(null)}
+      />
+
+      <ConfirmDialog
+        isOpen={confirmClear !== null}
+        title="Clear Chat History"
+        message="Are you sure you want to delete all messages in this chat? This action cannot be undone."
+        confirmText="Clear Chat"
+        onConfirm={handleClearChat}
+        onCancel={() => setConfirmClear(null)}
+      />
 
       {/* ── Sidebar: Chat List ── */}
       <div
@@ -241,13 +435,22 @@ export default function ChatsPage() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button id="voice-call-btn" onClick={() => startCall(other.id, 'voice')}
+                <button id="simulate-incoming-btn" title="Simulate Incoming Call" onClick={() => receiveCall(other.id, 'video')}
+                  style={{ background: 'rgba(236,72,153,0.1)', border: '1px solid rgba(236,72,153,0.2)', borderRadius: '10px', padding: '8px', cursor: 'pointer', color: '#ec4899', display: 'flex' }}>
+                  <PhoneIncoming size={16} />
+                </button>
+                <button id="voice-call-btn" onClick={() => setConfirmCall({ partnerId: other.id, type: 'voice' })}
                   style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '10px', padding: '8px', cursor: 'pointer', color: '#10b981', display: 'flex' }}>
                   <Phone size={16} />
                 </button>
-                <button id="video-call-btn" onClick={() => startCall(other.id, 'video')}
+                <button id="video-call-btn" onClick={() => setConfirmCall({ partnerId: other.id, type: 'video' })}
                   style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '10px', padding: '8px', cursor: 'pointer', color: '#3b82f6', display: 'flex' }}>
                   <Video size={16} />
+                </button>
+                <div style={{ width: '1px', background: 'var(--border-color)', margin: '0 4px' }} />
+                <button id="clear-chat-btn" onClick={() => setConfirmClear(other.id)}
+                  style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '10px', padding: '8px', cursor: 'pointer', color: '#ef4444', display: 'flex' }}>
+                  <Trash2 size={16} />
                 </button>
               </div>
             </div>
@@ -280,17 +483,11 @@ export default function ChatsPage() {
                     }}>
                       {/* Message body */}
                       {msg.type === 'voice' ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <Mic size={14} />
-                          <VoiceWaveform bars={10} />
-                          <span style={{ fontSize: '12px', opacity: 0.8 }}>{msg.content}</span>
-                        </div>
+                        <VoiceMessage content={msg.content} isSelf={isSelf} />
                       ) : msg.type === 'after-view' ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Eye size={13} style={{ opacity: 0.7 }} />
-                          <span style={{ fontSize: '14px' }}>{msg.content}</span>
-                          <span style={{ fontSize: '10px', opacity: 0.6, background: 'rgba(0,0,0,0.2)', padding: '2px 6px', borderRadius: '6px' }}>After-view</span>
-                        </div>
+                        <AfterViewMessage content={msg.content} />
+                      ) : msg.type === 'snap' ? (
+                        <SnapMessage content={msg.content} />
                       ) : msg.type === 'timed-delete' ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <Trash2 size={13} style={{ opacity: 0.7 }} />
@@ -365,6 +562,7 @@ export default function ChatsPage() {
                 {/* Attachment buttons */}
                 <div style={{ display: 'flex', gap: '6px' }}>
                   <button id="snap-btn" title="Send Snap"
+                    onClick={handleSendSnap}
                     style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '10px', padding: '10px', cursor: 'pointer', color: '#f59e0b', display: 'flex' }}>
                     <Zap size={16} />
                   </button>

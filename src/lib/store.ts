@@ -1,8 +1,8 @@
 'use client';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { User, Message, Chat } from './types';
-import { MOCK_USERS, MOCK_MESSAGES, MOCK_CHATS } from './mock-data';
+import type { User, Message, Chat, FriendRequest } from './types';
+import { MOCK_USERS, MOCK_MESSAGES, MOCK_CHATS, MOCK_FRIEND_REQUESTS } from './mock-data';
 
 interface AuthState {
   currentUser: User | null;
@@ -24,6 +24,7 @@ interface UIState {
   vaultUnlocked: boolean;
   snapViewerOpen: boolean;
   callActive: boolean;
+  callStatus: 'idle' | 'calling' | 'ringing' | 'connected';
   callType: 'voice' | 'video' | null;
   callPartnerId: string | null;
 }
@@ -32,9 +33,17 @@ interface AppStore extends AuthState, ChatState, UIState {
   // Auth actions
   signUp: (user: Partial<User>, password: string) => void;
   login: (email: string, password: string) => 'needs-otp' | 'authenticated' | 'error';
+  adminLogin: (password: string) => boolean;
   verifyOTP: (otp: string) => boolean;
   logout: () => void;
   setPendingEmail: (email: string) => void;
+
+  // Friend actions
+  friendRequests: FriendRequest[];
+  sendFriendRequest: (receiverId: string) => void;
+  acceptFriendRequest: (requestId: string) => void;
+  rejectFriendRequest: (requestId: string) => void;
+  removeFriend: (friendId: string) => void;
 
   // Chat actions
   setActiveChat: (chatId: string | null) => void;
@@ -46,14 +55,17 @@ interface AppStore extends AuthState, ChatState, UIState {
   unlockVault: (pin: string) => boolean;
   lockVault: () => void;
   startCall: (partnerId: string, type: 'voice' | 'video') => void;
+  shouldConnectCall: () => void;
+  receiveCall: (partnerId: string, type: 'voice' | 'video') => void;
+  acceptCall: () => void;
+  declineCall: () => void;
   endCall: () => void;
 }
 
 // Demo registered users: simulate already-registered users
 const REGISTERED_USERS: Record<string, { user: User; password: string }> = {
-  'priya@chatify.io': { user: MOCK_USERS[1], password: 'demo123' },
-  'rahul@chatify.io': { user: MOCK_USERS[2], password: 'demo123' },
-  'admin@chatify.io': { user: MOCK_USERS[4], password: 'admin123' },
+  'priya@chatify.io': { user: MOCK_USERS.find(u => u.email === 'priya@chatify.io')!, password: 'demo123' },
+  'rahul@chatify.io': { user: MOCK_USERS.find(u => u.email === 'rahul@chatify.io')!, password: 'demo123' },
 };
 
 export const useAppStore = create<AppStore>()(
@@ -64,6 +76,9 @@ export const useAppStore = create<AppStore>()(
       isAuthenticated: false,
       pendingEmail: '',
       authStage: 'idle',
+
+      // Friend initial state
+      friendRequests: MOCK_FRIEND_REQUESTS,
 
       // Chat initial state
       chats: MOCK_CHATS,
@@ -76,6 +91,7 @@ export const useAppStore = create<AppStore>()(
       vaultUnlocked: false,
       snapViewerOpen: false,
       callActive: false,
+      callStatus: 'idle',
       callType: null,
       callPartnerId: null,
 
@@ -130,6 +146,27 @@ export const useAppStore = create<AppStore>()(
         return 'authenticated';
       },
 
+      adminLogin: (password) => {
+        if (password === 'admin123') {
+          const adminUser: User = {
+            id: 'admin-1',
+            username: 'chatify_admin',
+            email: 'admin@chatify.io',
+            displayName: 'System Admin',
+            avatar: '🛡️',
+            type: 'admin',
+            status: 'available',
+            joinedDate: '2023-12-01',
+            loginCount: 100,
+            emailVerified: true,
+            lastSeen: 'now',
+          };
+          set({ currentUser: adminUser, isAuthenticated: true, authStage: 'authenticated' });
+          return true;
+        }
+        return false;
+      },
+
       verifyOTP: (_otp) => {
         // In real app, validate against server-sent OTP
         // Demo: any 6-digit code works
@@ -156,6 +193,44 @@ export const useAppStore = create<AppStore>()(
           activeChatId: null,
           vaultUnlocked: false,
         });
+      },
+
+      // Friend actions
+      sendFriendRequest: (receiverId) => {
+        const { currentUser, friendRequests } = get();
+        if (!currentUser) return;
+        const newReq: FriendRequest = {
+          id: `req-${Date.now()}`,
+          senderId: currentUser.id,
+          receiverId,
+          status: 'pending',
+          timestamp: new Date().toISOString()
+        };
+        set({ friendRequests: [...friendRequests, newReq] });
+      },
+
+      acceptFriendRequest: (requestId) => {
+        set((state) => ({
+          friendRequests: state.friendRequests.map(r => r.id === requestId ? { ...r, status: 'accepted' } : r)
+        }));
+      },
+
+      rejectFriendRequest: (requestId) => {
+        set((state) => ({
+          friendRequests: state.friendRequests.map(r => r.id === requestId ? { ...r, status: 'rejected' } : r)
+        }));
+      },
+
+      removeFriend: (friendId) => {
+        const { currentUser } = get();
+        if (!currentUser) return;
+        set((state) => ({
+          friendRequests: state.friendRequests.filter(r => 
+            !(r.status === 'accepted' && 
+              ((r.senderId === currentUser.id && r.receiverId === friendId) || 
+               (r.receiverId === currentUser.id && r.senderId === friendId)))
+          )
+        }));
       },
 
       // Chat actions
@@ -204,10 +279,22 @@ export const useAppStore = create<AppStore>()(
       lockVault: () => set({ vaultUnlocked: false }),
 
       startCall: (partnerId, type) =>
-        set({ callActive: true, callType: type, callPartnerId: partnerId }),
+        set({ callActive: true, callStatus: 'calling', callType: type, callPartnerId: partnerId }),
+
+      shouldConnectCall: () =>
+        set(state => state.callActive && state.callStatus === 'calling' ? { callStatus: 'connected' } : state),
+
+      receiveCall: (partnerId, type) =>
+        set({ callActive: true, callStatus: 'ringing', callType: type, callPartnerId: partnerId }),
+
+      acceptCall: () =>
+        set({ callStatus: 'connected' }),
+
+      declineCall: () =>
+        set({ callActive: false, callStatus: 'idle', callType: null, callPartnerId: null }),
 
       endCall: () =>
-        set({ callActive: false, callType: null, callPartnerId: null }),
+        set({ callActive: false, callStatus: 'idle', callType: null, callPartnerId: null }),
     }),
     {
       name: 'chatify-store',
@@ -216,6 +303,7 @@ export const useAppStore = create<AppStore>()(
         isAuthenticated: state.isAuthenticated,
         authStage: state.authStage,
         pendingEmail: state.pendingEmail,
+        friendRequests: state.friendRequests,
       }),
     }
   )

@@ -4,6 +4,14 @@ export type UserStatus = 'available' | 'not-available';
 export type MessageType = 'normal' | 'after-view' | 'timed-delete' | 'snap' | 'voice' | 'location' | 'image';
 export type AuthStage = 'signup' | 'otp-verify' | 'logged-in';
 
+export interface FriendRequest {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  timestamp: string;
+}
+
 export interface User {
   id: string;
   username: string;
@@ -18,6 +26,9 @@ export interface User {
   lastSeen: string;
   device?: string;
   bio?: string;
+  friendsCount?: number;
+  sentRequestsCount?: number;
+  receivedRequestsCount?: number;
 }
 
 export interface Message {

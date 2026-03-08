@@ -110,10 +110,15 @@ function StoryViewer({ story, onClose }: { story: (typeof MOCK_STORIES)[0]; onCl
 }
 
 export default function StoriesPage() {
-  const { currentUser } = useAppStore();
+  const { currentUser, friendRequests } = useAppStore();
   const [viewingStory, setViewingStory] = useState<(typeof MOCK_STORIES)[0] | null>(null);
 
-  const storyUsers = [...new Set(MOCK_STORIES.map(s => s.userId))];
+  const acceptedFriendsIds = currentUser ? friendRequests
+    .filter(r => r.status === 'accepted' && (r.senderId === currentUser.id || r.receiverId === currentUser.id))
+    .map(r => r.senderId === currentUser.id ? r.receiverId : r.senderId) : [];
+
+  const visibleStories = MOCK_STORIES.filter(s => s.userId === currentUser?.id || acceptedFriendsIds.includes(s.userId));
+  const storyUsers = [...new Set(visibleStories.map(s => s.userId))];
 
   return (
     <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
@@ -170,7 +175,7 @@ export default function StoriesPage() {
       <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px', marginBottom: '24px' }}>
         {storyUsers.map((uid) => {
           const user = MOCK_USERS.find(u => u.id === uid);
-          const userStories = MOCK_STORIES.filter(s => s.userId === uid);
+          const userStories = visibleStories.filter(s => s.userId === uid);
           const story = userStories[0];
           if (!user) return null;
           return (
@@ -196,7 +201,7 @@ export default function StoriesPage() {
 
       {/* Story Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
-        {MOCK_STORIES.map((story) => {
+        {visibleStories.map((story) => {
           const user = MOCK_USERS.find(u => u.id === story.userId);
           const expiresIn = Math.max(0, Math.floor((new Date(story.expiresAt).getTime() - Date.now()) / 3600000));
           return (

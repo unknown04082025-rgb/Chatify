@@ -2,10 +2,11 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAppStore } from '@/lib/store';
-import { MessageCircle, BookOpen, Tv2, Lock, Brain, Settings, LogOut, Shield } from 'lucide-react';
+import { MessageCircle, BookOpen, Tv2, Lock, Brain, Users, LogOut, Shield } from 'lucide-react';
 
 const NAV_ITEMS = [
   { href: '/chats', label: 'Chats', icon: MessageCircle },
+  { href: '/friends', label: 'Friends', icon: Users },
   { href: '/stories', label: 'Stories', icon: BookOpen },
   { href: '/watch', label: 'Watch', icon: Tv2 },
   { href: '/vault', label: 'Vault', icon: Lock },
@@ -15,7 +16,11 @@ const NAV_ITEMS = [
 export function TopNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, logout } = useAppStore();
+  const { currentUser, logout, friendRequests } = useAppStore();
+
+  const pendingRequestsCount = currentUser 
+    ? friendRequests.filter(r => r.receiverId === currentUser.id && r.status === 'pending').length 
+    : 0;
 
   const handleLogout = () => {
     logout();
@@ -57,6 +62,7 @@ export function TopNav() {
       <div style={{ display: 'flex', gap: '4px', flex: 1 }}>
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = pathname.startsWith(href);
+          const hasBadge = href === '/friends' && pendingRequestsCount > 0;
           return (
             <Link key={href} href={href} style={{
               display: 'flex', alignItems: 'center', gap: '8px',
@@ -68,9 +74,17 @@ export function TopNav() {
               color: active ? 'var(--accent-violet)' : 'var(--text-secondary)',
               fontWeight: active ? 600 : 400,
               fontSize: '14px',
+              position: 'relative'
             }}>
               <Icon size={16} />
               <span className="desktop-only">{label}</span>
+              {hasBadge && (
+                <div style={{
+                  position: active ? 'relative' : 'absolute', top: active ? 0 : '4px', right: active ? 'auto' : '8px',
+                  width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444',
+                  boxShadow: '0 0 8px rgba(239, 68, 68, 0.8)'
+                }} />
+              )}
             </Link>
           );
         })}
@@ -140,6 +154,11 @@ export function TopNav() {
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { currentUser, friendRequests } = useAppStore();
+
+  const pendingRequestsCount = currentUser 
+    ? friendRequests.filter(r => r.receiverId === currentUser.id && r.status === 'pending').length 
+    : 0;
 
   return (
     <nav style={{
@@ -158,6 +177,7 @@ export function BottomNav() {
     }}>
       {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
         const active = pathname.startsWith(href);
+        const hasBadge = href === '/friends' && pendingRequestsCount > 0;
         return (
           <Link key={href} href={href} style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
@@ -166,9 +186,17 @@ export function BottomNav() {
             transition: 'all 0.2s ease',
             background: active ? 'rgba(124, 58, 237, 0.15)' : 'transparent',
             color: active ? 'var(--accent-violet)' : 'var(--text-muted)',
+            position: 'relative'
           }}>
             <Icon size={22} strokeWidth={active ? 2.5 : 1.8} />
             <span style={{ fontSize: '10px', fontWeight: active ? 700 : 400 }}>{label}</span>
+            {hasBadge && (
+              <div style={{
+                position: 'absolute', top: '6px', right: '12px',
+                width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444',
+                border: '2px solid var(--bg-primary)',
+              }} />
+            )}
           </Link>
         );
       })}
