@@ -2,12 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-/* @tailwind base; */
-/* @tailwind components; */
-/* @tailwind utilities; */
-
-:root {
+@theme {
   --color-primary: #3713ec;
+  --color-secondary: #0f172a;
+  --color-accent: #2563eb;
+  
   --color-background-light: #f6f6f8;
   --color-background-dark: #111621;
   
@@ -20,16 +19,26 @@
   --text-muted: #64748b;
   --shadow-glow: 0 0 20px rgba(55, 19, 236, 0.3);
   
-  --font-display: 'Inter', sans-serif;
+  --font-display: "Inter", sans-serif;
   
-  --radius-DEFAULT: 1rem;
+  --radius-default: 1rem;
   --radius-lg: 2rem;
   --radius-xl: 3rem;
-  --radius-full: 9999px;
 
   --nav-height: 64px;
 
+  --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
+
+  --default-font-family: var(--font-display);
+}
+
+:root {
   --gradient-primary: linear-gradient(135deg, #3713ec 0%, #2563eb 100%);
+  --bg-primary: #111621;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --bg-glass: rgba(30, 41, 59, 0.4);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-glow: 0 0 20px rgba(55, 19, 236, 0.3);
 }
 
 @layer components {
@@ -55,17 +64,18 @@
   }
 
   .glass-bubble-primary {
-      background: rgba(36, 99, 235, 0.8);
+      background: rgba(55, 19, 236, 0.8);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.2);
   }
   
   .bg-gradient-mesh {
-      background-color: #131022;
+      background-color: #0b0e14;
       background-image: 
-          radial-gradient(at 0% 0%, rgba(55, 19, 236, 0.15) 0px, transparent 50%),
-          radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.1) 0px, transparent 50%);
+          radial-gradient(at 0% 0%, rgba(55, 19, 236, 0.25) 0px, transparent 50%),
+          radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+          radial-gradient(at 50% 50%, rgba(55, 19, 236, 0.1) 0px, transparent 70%);
   }
 
   .neon-glow {
@@ -83,8 +93,6 @@ body {
   margin: 0;
   padding: 0;
 }
-
-/* Global resets for the app */
 
 .status-available {
   color: #10b981;

@@ -147,14 +147,14 @@ export function CallOverlay() {
   // Render incoming/outgoing ringing state
   if (callStatus === 'calling' || callStatus === 'ringing') {
     return (
-      <div className="call-overlay" style={{ display: 'flex', flexDirection: 'column', background: 'var(--bg-secondary)', zIndex: 999 }}>
+      <div className="call-overlay" style={{ display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)', zIndex: 999 }}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{
             width: '140px', height: '140px', borderRadius: '50%',
             background: 'var(--gradient-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px',
             marginBottom: '32px',
-            boxShadow: '0 0 60px rgba(124,58,237,0.4)',
+            boxShadow: '0 0 60px rgba(55, 19, 236, 0.4)',
             animation: callStatus === 'ringing' ? 'glow-pulse 1s ease-in-out infinite' : 'bounce-dot 1.5s infinite alternate',
           }}>
             {partner?.avatar}
@@ -221,7 +221,7 @@ export function CallOverlay() {
                 <button
                   onClick={() => confirmScreenShare(true)}
                   style={{
-                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    background: 'var(--gradient-primary)',
                     color: 'white', padding: '12px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 600
                   }}>
                   Enable System Audio
@@ -303,7 +303,7 @@ export function CallOverlay() {
               background: 'var(--gradient-primary)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '56px',
               margin: '0 auto 24px',
-              boxShadow: '0 0 60px rgba(124,58,237,0.4)',
+              boxShadow: '0 0 60px rgba(55, 19, 236, 0.4)',
               animation: webrtc.remoteStream ? 'none' : 'glow-pulse 2s ease-in-out infinite',
             }}>
               {partner?.avatar}
@@ -368,7 +368,7 @@ export function CallOverlay() {
               style={{ 
                 background: webrtc.screenStream ? 'rgba(239, 68, 68, 0.2)' : 'rgba(59,130,246,0.2)', 
                 backdropFilter: 'blur(8px)', 
-                border: `1px solid ${webrtc.screenStream ? 'rgba(239, 68, 68, 0.5)' : 'rgba(59,130,246,0.5)'}`, 
+                border: `1px solid ${webrtc.screenStream ? 'rgba(239, 68, 68, 0.5)' : 'rgba(55, 19, 236, 0.5)'}`, 
                 borderRadius: '10px', padding: '8px 12px', cursor: 'pointer', 
                 color: webrtc.screenStream ? '#fca5a5' : '#93c5fd', 
                 display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600

@@ -106,10 +106,10 @@ export default function AdminDashboard() {
             <div className="h-64 w-full relative">
               <svg className="w-full h-full drop-shadow-xl" fill="none" preserveAspectRatio="none" viewBox="0 0 500 150">
                 <path d="M0 120 C 50 110, 100 40, 150 60 S 250 100, 300 40 S 400 20, 500 50 V 150 H 0 Z" fill="url(#gradient)" opacity="0.15"></path>
-                <path d="M0 120 C 50 110, 100 40, 150 60 S 250 100, 300 40 S 400 20, 500 50" fill="none" stroke="#3713ec" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"></path>
+                <path d="M0 120 C 50 110, 100 40, 150 60 S 250 100, 300 40 S 400 20, 500 50" fill="none" stroke="var(--color-primary)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"></path>
                 <defs>
                   <linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stopColor="#3713ec"></stop>
+                    <stop offset="0%" stopColor="var(--color-primary)"></stop>
                     <stop offset="100%" stopColor="transparent"></stop>
                   </linearGradient>
                 </defs>

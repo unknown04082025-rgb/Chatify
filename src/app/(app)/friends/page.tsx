@@ -41,7 +41,7 @@ export default function FriendsPage() {
           <div style={{ 
             width: '42px', height: '42px', borderRadius: '14px', 
             background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 25px rgba(124,58,237,0.3)'
+            boxShadow: '0 0 25px rgba(55, 19, 236, 0.3)'
           }}>
             <Users size={20} color="white" />
           </div>
@@ -53,10 +53,10 @@ export default function FriendsPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginTop: '24px' }}>
           
           <div className="stat-card card-glow" style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #7c3aed, transparent)', borderRadius: '16px 16px 0 0' }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, var(--color-primary), transparent)', borderRadius: '16px 16px 0 0' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-              <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <UserCheck size={18} color="#7c3aed" />
+              <div style={{ width: '38px', height: '38px', borderRadius: '12px', background: 'rgba(55, 19, 236, 0.1)', border: '1px solid rgba(55, 19, 236, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <UserCheck size={18} color="var(--color-primary)" />
               </div>
               <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Accepted Friends</span>
             </div>
@@ -148,7 +148,7 @@ export default function FriendsPage() {
             filteredAccepted.map(friend => (
               <div key={friend.id} className="glass-card" style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'all 0.3s' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(124,58,237,0.3)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <div style={{ width: '46px', height: '46px', borderRadius: '50%', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', position: 'relative', flexShrink: 0, boxShadow: '0 0 15px rgba(124,58,237,0.2)' }}>
+                  <div style={{ width: '46px', height: '46px', borderRadius: '50%', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', position: 'relative', flexShrink: 0, boxShadow: '0 0 15px rgba(55, 19, 236, 0.2)' }}>
                     {friend.avatar}
                     <div style={{ position: 'absolute', bottom: 0, right: 0, width: '12px', height: '12px', borderRadius: '50%', background: friend.status === 'available' ? '#10b981' : '#475569', border: '2px solid rgba(12,17,35,1)' }} />
                   </div>
@@ -186,7 +186,7 @@ export default function FriendsPage() {
                   const sender = MOCK_USERS.find(u => u.id === req.senderId);
                   if (!sender) return null;
                   return (
-                    <div key={req.id} className="glass-card" style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderLeft: '3px solid var(--accent-violet)', background: 'linear-gradient(90deg, rgba(124,58,237,0.05), transparent)' }}>
+                    <div key={req.id} className="glass-card" style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderLeft: '3px solid var(--color-primary)', background: 'linear-gradient(90deg, rgba(55, 19, 236, 0.05), transparent)' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                         <div style={{ width: '46px', height: '46px', borderRadius: '50%', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', flexShrink: 0 }}>
                           {sender.avatar}
@@ -200,7 +200,7 @@ export default function FriendsPage() {
                         <button onClick={() => rejectFriendRequest(req.id)} style={{ width: '38px', height: '38px', borderRadius: '12px', border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.05)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.15)'} onMouseLeave={e => e.currentTarget.style.background='rgba(239,68,68,0.05)'}>
                           <X size={18} />
                         </button>
-                        <button onClick={() => acceptFriendRequest(req.id)} style={{ width: '38px', height: '38px', borderRadius: '12px', border: 'none', background: 'var(--gradient-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 0 15px rgba(124,58,237,0.3)', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'}>
+                        <button onClick={() => acceptFriendRequest(req.id)} style={{ width: '38px', height: '38px', borderRadius: '12px', border: 'none', background: 'var(--gradient-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 0 15px rgba(55, 19, 236, 0.3)', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'}>
                           <Check size={18} />
                         </button>
                       </div>
@@ -266,7 +266,7 @@ export default function FriendsPage() {
                     <Shield size={10} /> Exclusive
                   </div>
                 )}
-                <button onClick={() => sendFriendRequest(user.id)} style={{ padding: '8px 14px', borderRadius: '10px', border: '1px solid rgba(124,58,237,0.3)', background: 'rgba(124,58,237,0.1)', color: 'var(--accent-violet)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(124,58,237,0.2)'} onMouseLeave={e => e.currentTarget.style.background='rgba(124,58,237,0.1)'}>
+                <button onClick={() => sendFriendRequest(user.id)} style={{ padding: '8px 14px', borderRadius: '10px', border: '1px solid rgba(55, 19, 236, 0.3)', background: 'rgba(55, 19, 236, 0.1)', color: 'var(--color-primary)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(55, 19, 236, 0.2)'} onMouseLeave={e => e.currentTarget.style.background='rgba(55, 19, 236, 0.1)'}>
                   <UserPlus size={16} /> Add 
                 </button>
               </div>
