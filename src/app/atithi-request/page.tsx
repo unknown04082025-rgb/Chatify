@@ -51,7 +51,7 @@ export default function AtithiRequestPage() {
             <h2 style={{ fontSize: '22px', fontWeight: 700 }}>Request Submitted!</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '10px', lineHeight: 1.6 }}>
               Your Atithi access request has been sent to the admin.<br />
-              You'll be notified once approved.
+              You&apos;ll be notified once approved.
             </p>
             <Link href="/login" style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',

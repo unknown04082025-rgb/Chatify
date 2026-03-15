@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 import { useState } from 'react';
 import { MOCK_STORIES, MOCK_USERS } from '@/lib/mock-data';
@@ -258,6 +259,7 @@ export default function StoriesPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '20px' }}>
         {visibleStories.map((story) => {
           const user = MOCK_USERS.find(u => u.id === story.userId);
+          // eslint-disable-next-line react-hooks/purity
           const expiresIn = Math.max(0, Math.floor((new Date(story.expiresAt).getTime() - Date.now()) / 3600000));
           return (
             <button key={story.id} id={`story-card-${story.id}`}

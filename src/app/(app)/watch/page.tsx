@@ -1,8 +1,8 @@
+/* eslint-disable @next/next/no-img-element, react/no-unescaped-entities */
 'use client';
 import { useState, useEffect } from 'react';
 import {
-  Play, Pause, Volume2, VolumeX, Maximize, Monitor, Mic, SkipForward,
-  SkipBack, Users, Upload, Plus, Settings, Loader2, MessageCircle
+  Play, Plus, Users, Loader2, Monitor, Volume2, Mic, Upload
 } from 'lucide-react';
 
 export default function WatchPage() {
@@ -14,9 +14,9 @@ export default function WatchPage() {
   const [screenSharing, setScreenSharing] = useState(false);
   const [audioSharing, setAudioSharing] = useState(false);
   const [voiceChat, setVoiceChat] = useState(false);
-  const [currentTime, setCurrentTime] = useState(1934);
+  const [currentTime, setCurrentTime] = useState(2538); // 42:18
   
-  const totalTime = 6450;
+  const totalTime = 5040; // 1:24:00
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -46,334 +46,239 @@ export default function WatchPage() {
 
   const progressPercent = (currentTime / totalTime) * 100;
 
-  const mockChats = [
-    { user: 'Marcus Wright', msg: 'This scene is absolutely incredible in 4K! 🎬', color: '#8b5cf6' },
-    { user: 'You', msg: 'Wait for the twist coming in 5 minutes...', color: '#3b82f6' },
-    { user: 'Sarah Jenkins', msg: "Don't spoil it! haha 😂", color: '#ec4899' },
-  ];
+  if (!inRoom) {
+     return (
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-full">
+           <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-cobalt-accent text-white flex items-center justify-center shadow-lg shadow-primary/20">
+                    <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>movie</span>
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold tracking-tight">Watch Cinema</h1>
+                    <p className="text-sm text-slate-500 font-medium tracking-wide">Watch movies together in real-time</p>
+                  </div>
+                </div>
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 {/* Create Room */}
+                 <button onClick={() => setInRoom(true)} className="glass-panel group relative overflow-hidden rounded-3xl p-8 flex flex-col items-center justify-center gap-4 border border-slate-200 dark:border-slate-700/50 hover:border-primary/50 transition-all text-center">
+                    <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-blue-400 text-white flex items-center justify-center shadow-xl shadow-primary/20 group-hover:scale-110 transition-transform">
+                       <Plus size={32} />
+                    </div>
+                    <div>
+                       <h3 className="text-lg font-bold">Create Room</h3>
+                       <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Start a new cinema room and invite friends</p>
+                    </div>
+                 </button>
+
+                 {/* Join Room */}
+                 <div className="glass-panel rounded-3xl p-8 flex flex-col items-center justify-center gap-5 border border-slate-200 dark:border-slate-700/50 text-center relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-bl-[100px] pointer-events-none"></div>
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 text-white flex items-center justify-center shadow-xl shadow-emerald-500/20">
+                       <Users size={32} />
+                    </div>
+                    <div className="w-full max-w-xs space-y-4">
+                       <h3 className="text-lg font-bold">Join Room</h3>
+                       <input 
+                         type="text" 
+                         placeholder="Paste room code..." 
+                         className="w-full bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-center text-sm focus:ring-2 focus:ring-emerald-500/50 focus:outline-none transition-all"
+                       />
+                       <button 
+                         onClick={handleJoin} 
+                         disabled={loading}
+                         className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors flex items-center justify-center gap-2"
+                       >
+                         {loading ? <Loader2 size={18} className="animate-spin" /> : 'Join Room'}
+                       </button>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+     );
+  }
+
+  // Exact Stitch HTML structure for Watch Cinema translated to React
   return (
-    <div style={{ padding: '24px', maxWidth: '960px', margin: '0 auto' }}>
+    <div className="flex h-full w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased relative">
+      <style dangerouslySetInnerHTML={{__html: `
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .video-gradient {
+            background: linear-gradient(to top, rgba(17, 22, 33, 1) 0%, rgba(17, 22, 33, 0) 100%);
+        }
+      `}} />
+      
       {/* Header */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px',
-        animation: 'fadeInUp 0.5s ease forwards',
-      }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px' }}>
-            <div style={{
-              width: '40px', height: '40px', borderRadius: '12px',
-              background: 'linear-gradient(135deg, #6d28d9, #3b82f6)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 20px rgba(109,40,217,0.3)',
-            }}>
-              <Play size={18} color="white" fill="white" />
-            </div>
-            <h1 style={{ fontSize: '24px', fontWeight: 700, letterSpacing: '-0.02em' }}>Watch Cinema</h1>
+      <div className="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between z-10 border-b border-slate-200 dark:border-slate-800">
+        <div onClick={() => setInRoom(false)} className="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+          <span className="material-symbols-outlined">arrow_back</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <h2 className="text-slate-900 dark:text-slate-100 text-base font-bold leading-tight tracking-tight">The Midnight Horizon</h2>
+          <div className="flex items-center gap-1.5">
+            <span className="size-2 rounded-full bg-red-500 animate-pulse"></span>
+            <p className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-widest">Live with 12 Friends</p>
           </div>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginLeft: '52px' }}>
-            Watch movies together in real-time
-          </p>
+        </div>
+        <div className="flex size-10 items-center justify-center">
+          <button className="flex items-center justify-center rounded-full size-10 bg-primary/10 text-primary hover:bg-primary/20 transition-all">
+            <span className="material-symbols-outlined text-[20px]">share</span>
+          </button>
         </div>
       </div>
 
-      {!inRoom ? (
-        /* Room Selection */
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px',
-          animation: 'fadeInUp 0.6s ease forwards',
-        }}>
-          {/* Create Room */}
-          <button id="create-room-btn"
-            onClick={() => setInRoom(true)}
-            style={{
-              background: 'rgba(12,17,35,0.8)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '20px', padding: '36px 24px',
-              cursor: 'pointer', textAlign: 'center',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
-              position: 'relative', overflow: 'hidden',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(124,58,237,0.3)'; e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.4), 0 0 30px rgba(124,58,237,0.1)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.04)'; }}>
-            <div style={{
-              width: '64px', height: '64px', borderRadius: '18px',
-              background: 'var(--gradient-primary)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 30px rgba(124,58,237,0.3)',
-            }}>
-              <Plus size={28} color="white" />
-            </div>
-            <div>
-              <div style={{ fontSize: '17px', fontWeight: 700, marginBottom: '6px' }}>Create Room</div>
-              <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Start a new cinema room with a friend</div>
-            </div>
-          </button>
-
-          {/* Join Room */}
-          <div style={{
-            background: 'rgba(12,17,35,0.8)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '20px', padding: '36px 24px',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
-          }}>
-            <div style={{
-              width: '64px', height: '64px', borderRadius: '18px',
-              background: 'linear-gradient(135deg, #06b6d4, #3b82f6)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 30px rgba(6,182,212,0.2)',
-            }}>
-              <Users size={28} color="white" />
-            </div>
-            <div style={{ textAlign: 'center', width: '100%' }}>
-              <div style={{ fontSize: '17px', fontWeight: 700, marginBottom: '10px' }}>Join Room</div>
-              <input className="input-field" placeholder="Enter room code..." style={{ textAlign: 'center', fontSize: '13px', marginBottom: '12px', height: '46px' }} id="room-code-input" />
-              <button className="btn-primary" style={{ width: '100%', fontSize: '13px', opacity: loading ? 0.7 : 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', height: '46px', borderRadius: '12px' }}
-                onClick={handleJoin} id="join-room-btn" disabled={loading}>
-                {loading ? <Loader2 size={16} className="animate-spin" /> : 'Join Room'}
-              </button>
-            </div>
-          </div>
-
-          {/* Features */}
-          <div style={{
-            background: 'rgba(12,17,35,0.8)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '20px', padding: '28px 24px',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
-          }}>
-            <div style={{ fontSize: '15px', fontWeight: 600, marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{
-                width: '28px', height: '28px', borderRadius: '8px',
-                background: 'rgba(124,58,237,0.12)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              }}>🎬</span>
-              Cinema Features
-            </div>
-            {[
-              { icon: '🎬', label: 'Upload any movie' },
-              { icon: '⏯️', label: 'Synchronized playback' },
-              { icon: '🎙️', label: 'Voice chat while watching' },
-              { icon: '🖥️', label: 'Screen sharing support' },
-              { icon: '🔊', label: 'System audio sharing' },
-              { icon: '⚡', label: 'Real-time speed control' },
-            ].map(({ icon, label }) => (
-              <div key={label} style={{
-                display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px', fontSize: '13px',
-                padding: '6px 0',
-              }}>
-                <span style={{
-                  width: '28px', height: '28px', borderRadius: '8px',
-                  background: 'rgba(255,255,255,0.03)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '14px',
-                }}>{icon}</span>
-                <span style={{ color: 'var(--text-secondary)' }}>{label}</span>
+      {/* Cinematic Video Player Area */}
+      <div className="relative flex-none lg:flex-1 w-full flex flex-col items-center justify-start bg-black">
+        {/* Video Mockup */}
+        <div className="relative w-full aspect-video lg:h-full bg-cover bg-center" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuADMmY7GyagARCL1byOWgXnfda-gRqlqUgdtAVzLPel6Z0UHzOVtzwoS2olZDW610zkB6V-5Hezw84ruA_tQIoLRWmZSZ1QJW3OiUEovRDxawEv1Df0B_U0aUbrGnSVT40B41oPf5aCnF8tZ6bOKB3g8gEAVXaThuLV_SKAili1cPAkXNatAP_ciyc270QWM3jgSgPlPSJb-56z0_KqlEwh67QhGR70_vU-jTJPCD_PYBiwwGddKeja22xiauctrJ7QZEBpiOJ6E2Y')" }}>
+          
+          {screenSharing && (
+              <div className="absolute top-4 right-4 bg-emerald-500/90 backdrop-blur-md rounded-lg px-3 py-1.5 text-xs text-white font-bold flex items-center gap-2 shadow-lg z-20">
+                <Monitor size={14} /> Screen Sharing
               </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        /* Cinema Room */
-        <div style={{ animation: 'fadeInUp 0.5s ease' }}>
-          {/* Movie title bar */}
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px',
-            padding: '12px 18px',
-            background: 'rgba(12,17,35,0.8)', backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.06)', borderRadius: '14px',
-          }}>
-            <div>
-              <div style={{ fontSize: '16px', fontWeight: 700 }}>The Midnight Horizon</div>
-              <div style={{ fontSize: '12px', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px #10b981' }} />
-                Live with 12 Friends
+          )}
+
+          {/* Floating Avatars Over Video */}
+          <div className="absolute top-4 left-4 flex -space-x-3 z-20">
+            <div className="relative">
+              <img className="size-9 rounded-full border-2 border-background-dark object-cover bg-slate-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLuz0jDIU6sJudB8x8xcRm7I8uts7J0fdNV0hRJ-swcJST5Rf_XFHxIMt91j79wTOiyLfBvD5uMwR0d_ECJ4xmFKauR8HelU-YbFlmx_InIKH7yocq7P1EegjMFZm2fvY3VRwR_GpOQAzy4XPKoLLZQMypA2yok8TQKtwFBtvK7mzv2swKHTAyeZOHTb_qBMS72rCQcPcEohPUvjzQgys7A5GO3auSySnGkBQFYXAO6FiOQ2AcDMCeg976p-TZDNoXdYEUSBaoS58" alt="Avatar 1" />
+              <div className="absolute -bottom-1 -right-1 size-3 bg-green-500 border-2 border-background-dark rounded-full"></div>
+            </div>
+            <div className="relative border-2 border-primary rounded-full p-0.5 bg-background-dark">
+              <img className="size-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2-F3_a6TO1XGcMSbKywHLJCPoSb8PT05cpv7hh3QCZg_bUycWCJHRyWt_sGbEmXzCDwETahST53qUBIhiQSM7HmCyUIRqGLq0BdFZGzHsBqkvpL6_nT75GVHCmSdy6voNtnOAAXP56vVpzG6VVzxy5FC8XB4APctUfcGb6Bgwmg3CZrs7xplriit3rMtfMWRQGqa2ocbNWZ1peP_clhDZjC3Rpv3FVBTHuIKAkSPraR43MuoR6vZadUwj6b4mkzVtqxAHJFwqbZU" alt="Avatar 2" />
+              {/* Voice indicator wave mockup */}
+              <div className="absolute -top-1 -right-1 flex gap-0.5 items-end h-3 px-1 bg-primary rounded-full">
+                <div className="w-0.5 h-1 bg-white"></div>
+                <div className="w-0.5 h-2 bg-white animate-pulse"></div>
+                <div className="w-0.5 h-1.5 bg-white"></div>
               </div>
             </div>
-            <div style={{
-              padding: '4px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
-              background: 'rgba(124,58,237,0.1)', color: 'var(--accent-violet)',
-              border: '1px solid rgba(124,58,237,0.2)',
-            }}>Cinema Mode</div>
-          </div>
-
-          {/* Video Player */}
-          <div style={{
-            background: '#000', borderRadius: '20px', overflow: 'hidden',
-            position: 'relative', aspectRatio: '16/9', marginBottom: '16px',
-            border: '1px solid rgba(255,255,255,0.06)',
-            boxShadow: '0 0 60px rgba(0,0,0,0.8), 0 0 20px rgba(124,58,237,0.05)',
-          }}>
-            <div style={{
-              width: '100%', height: '100%',
-              background: 'linear-gradient(135deg, #05080f 0%, #1e1b4b 40%, #0f172a 70%, #05080f 100%)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '64px', marginBottom: '16px', filter: 'drop-shadow(0 0 20px rgba(124,58,237,0.3))' }}>🎬</div>
-                <div style={{ fontSize: '16px', color: 'var(--text-secondary)' }}>Cinema Room Active</div>
-                <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '6px' }}>Upload a movie to start watching</div>
-              </div>
+            <div className="relative">
+              <img className="size-9 rounded-full border-2 border-background-dark object-cover bg-slate-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9jPhLDTlv6FbUIEg2Gbv-dMbToKArkhBmJwjLuge1a-pqBm_8IcdpSDGALF6Bn5h3S_zCC4G7iKpPxejAe109NEO1S-2wu0KWiAqB2WNBVv4yknKronSosIJrUxWFJvl6shsS0cRmnwOzZ72yRBMGZG0qWVXyu3NY9Q7dOUK_N3WraO19n4R4nayE2kX8Bcf0Y9jd1-h66w11qeW1tSU5jJmkVNmcTq0PkdVkIAb-FnZyu33hYO-e5bI6xK55ZPV6V6SLt76U9zM" alt="Avatar 3" />
             </div>
-
-            {screenSharing && (
-              <div style={{
-                position: 'absolute', top: '12px', left: '12px',
-                background: 'rgba(16,185,129,0.9)', backdropFilter: 'blur(8px)', borderRadius: '8px',
-                padding: '4px 10px', fontSize: '12px', color: 'white', fontWeight: 600,
-                display: 'flex', alignItems: 'center', gap: '6px',
-              }}>
-                <Monitor size={12} /> Screen Sharing Active
-              </div>
-            )}
-
-            <div style={{
-              position: 'absolute', top: '12px', right: '12px',
-              width: '120px', height: '80px', borderRadius: '12px',
-              background: 'linear-gradient(135deg, #4c1d95, #1e3a8a)',
-              border: '2px solid rgba(255,255,255,0.15)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-            }}>🌸</div>
-          </div>
-
-          {/* Progress Bar */}
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{
-              height: '5px', background: 'rgba(255,255,255,0.05)', borderRadius: '5px',
-              cursor: 'pointer', position: 'relative',
-            }} onClick={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const newPercent = (e.clientX - rect.left) / rect.width;
-              setCurrentTime(newPercent * totalTime);
-            }}>
-              <div style={{
-                height: '100%', width: `${progressPercent}%`,
-                background: 'var(--gradient-primary)', borderRadius: '5px',
-                transition: playing ? 'width 1s linear' : 'width 0.1s',
-                boxShadow: '0 0 10px rgba(124,58,237,0.3)',
-              }} />
-              <div style={{
-                position: 'absolute', top: '50%', left: `${progressPercent}%`,
-                transform: 'translate(-50%, -50%)',
-                width: '14px', height: '14px', borderRadius: '50%',
-                background: 'white', boxShadow: '0 0 10px rgba(124,58,237,0.5)',
-                transition: 'transform 0.2s',
-              }} />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px', fontFamily: 'Space Grotesk' }}>
-              <span>{formatTime(currentTime)}</span><span>{formatTime(totalTime)}</span>
+            <div className="flex size-9 items-center justify-center rounded-full bg-slate-800/80 border-2 border-background-dark text-[10px] font-bold text-white z-10">
+                +8
             </div>
           </div>
-
-          {/* Controls */}
-          <div style={{
-            background: 'rgba(12,17,35,0.8)', backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '16px', padding: '16px 20px',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px',
-            flexWrap: 'wrap', marginBottom: '16px',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <button id="skip-back-btn" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex' }}>
-                <SkipBack size={20} />
-              </button>
-              <button id="play-pause-btn" onClick={() => setPlaying(!playing)} style={{
-                width: '48px', height: '48px', borderRadius: '50%',
-                background: 'var(--gradient-primary)', border: 'none', cursor: 'pointer',
-                color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 0 30px rgba(124,58,237,0.3)',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-              }}>
-                {playing ? <Pause size={20} /> : <Play size={20} style={{ marginLeft: '2px' }} />}
-              </button>
-              <button id="skip-fwd-btn" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex' }}>
-                <SkipForward size={20} />
-              </button>
-            </div>
-
-            <button id="mute-btn" onClick={() => setMuted(!muted)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex' }}>
-              {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+          
+          {/* Playback Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <button onClick={() => setPlaying(!playing)} className="glass-panel flex shrink-0 items-center justify-center rounded-full size-20 text-white hover:scale-105 transition-transform active:scale-95 pointer-events-auto">
+              <span className="material-symbols-outlined text-4xl ml-1" style={{ fontVariationSettings: "'FILL' 1" }}>
+                {playing ? 'pause' : 'play_arrow'}
+              </span>
             </button>
-
-            <div style={{ display: 'flex', gap: '4px' }}>
-              {[0.5, 1, 1.5, 2].map((s) => (
-                <button key={s} id={`speed-${s}`} onClick={() => setSpeed(s)} style={{
-                  padding: '5px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: speed === s ? 600 : 400,
-                  background: speed === s ? 'rgba(124,58,237,0.15)' : 'rgba(255,255,255,0.03)',
-                  border: `1px solid ${speed === s ? 'rgba(124,58,237,0.3)' : 'rgba(255,255,255,0.06)'}`,
-                  color: speed === s ? 'var(--accent-violet)' : 'var(--text-secondary)',
-                  cursor: 'pointer', transition: 'all 0.2s',
-                }}>
-                  {s}x
-                </button>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {[
-                { id: 'screen-share-btn', icon: <Monitor size={13} />, label: screenSharing ? 'Sharing' : 'Share Screen', active: screenSharing, toggle: () => setScreenSharing(!screenSharing), activeColor: '#10b981' },
-                { id: 'audio-share-btn', icon: <Volume2 size={13} />, label: 'Audio', active: audioSharing, toggle: () => setAudioSharing(!audioSharing), activeColor: '#3b82f6' },
-                { id: 'voice-chat-btn', icon: <Mic size={13} />, label: voiceChat ? 'Voice On' : 'Voice', active: voiceChat, toggle: () => setVoiceChat(!voiceChat), activeColor: '#8b5cf6' },
-              ].map(({ id, icon, label, active, toggle, activeColor }) => (
-                <button key={id} id={id} onClick={toggle} style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: 600,
-                  background: active ? `${activeColor}12` : 'rgba(255,255,255,0.03)',
-                  border: `1px solid ${active ? `${activeColor}30` : 'rgba(255,255,255,0.06)'}`,
-                  color: active ? activeColor : 'var(--text-secondary)', cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}>
-                  {icon} {label}
-                </button>
-              ))}
-              <button id="upload-movie-btn" style={{
-                display: 'flex', alignItems: 'center', gap: '6px',
-                padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: 600,
-                background: 'var(--gradient-primary)', border: 'none', color: 'white', cursor: 'pointer',
-                boxShadow: '0 0 15px rgba(124,58,237,0.2)',
-              }}>
-                <Upload size={13} /> Upload Movie
-              </button>
-            </div>
           </div>
 
-          {/* Live Chat */}
-          <div style={{
-            background: 'rgba(12,17,35,0.8)', backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '16px', padding: '18px 20px',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
-          }}>
-            <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
-              <MessageCircle size={14} style={{ color: 'var(--accent-violet)' }} /> Live Chat
+          {/* Bottom Video Controls */}
+          <div className="absolute inset-x-0 bottom-0 px-6 py-6 video-gradient z-20">
+            {/* Progress Bar */}
+            <div className="flex items-center gap-3 mb-4">
+              <p className="text-white/80 text-xs font-medium tabular-nums">{formatTime(currentTime)}</p>
+              <div 
+                className="relative flex-1 h-1.5 group cursor-pointer py-2"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const newPercent = (e.clientX - rect.left) / rect.width;
+                  setCurrentTime(newPercent * totalTime);
+                }}
+              >
+                <div className="absolute top-1/2 -translate-y-1/2 inset-x-0 h-1.5 bg-white/20 rounded-full"></div>
+                <div className="absolute top-1/2 -translate-y-1/2 left-0 h-1.5 bg-primary rounded-full transition-all duration-100 ease-linear" style={{ width: `${progressPercent}%` }}></div>
+                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-3.5 bg-white border-2 border-primary rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" style={{ left: `${progressPercent}%` }}></div>
+              </div>
+              <p className="text-white/80 text-xs font-medium tabular-nums">{formatTime(totalTime)}</p>
             </div>
-            {mockChats.map((chat, i) => (
-              <div key={i} style={{
-                display: 'flex', gap: '10px', marginBottom: '12px', alignItems: 'flex-start',
-              }}>
-                <div style={{
-                  width: '28px', height: '28px', borderRadius: '50%',
-                  background: `linear-gradient(135deg, ${chat.color}, ${chat.color}88)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '12px', color: 'white', fontWeight: 700, flexShrink: 0,
-                }}>{chat.user[0]}</div>
-                <div>
-                  <div style={{ fontSize: '12px', fontWeight: 600, color: chat.color, marginBottom: '2px' }}>{chat.user}</div>
-                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{chat.msg}</div>
+            
+            {/* Functional Icons Row */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="material-symbols-outlined text-white/90 cursor-pointer hover:text-white transition-colors">subtitles</span>
+                <div onClick={() => setSpeed(s => s === 1 ? 1.5 : (s === 1.5 ? 2 : 1))} className="flex items-center gap-1 bg-white/10 px-2 py-1 rounded-md text-[11px] font-bold text-white uppercase tracking-wider cursor-pointer hover:bg-white/20 transition-all select-none">
+                    {speed}x
+                </div>
+                <div className="flex items-center gap-2 ml-2">
+                  <button onClick={() => setScreenSharing(!screenSharing)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${screenSharing ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white/90 hover:bg-white/20'}`}>
+                    <Monitor size={14} />
+                  </button>
+                  <button onClick={() => setAudioSharing(!audioSharing)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${audioSharing ? 'bg-blue-500 text-white' : 'bg-white/10 text-white/90 hover:bg-white/20'}`}>
+                    <Volume2 size={14} />
+                  </button>
+                  <button onClick={() => setVoiceChat(!voiceChat)} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${voiceChat ? 'bg-purple-500 text-white' : 'bg-white/10 text-white/90 hover:bg-white/20'}`}>
+                    <Mic size={14} />
+                  </button>
                 </div>
               </div>
-            ))}
+              <div className="flex items-center gap-4">
+                <span onClick={() => setMuted(!muted)} className="material-symbols-outlined text-white/90 cursor-pointer hover:text-white transition-colors">
+                  {muted ? 'volume_off' : 'volume_up'}
+                </span>
+                <span className="material-symbols-outlined text-white/90 cursor-pointer hover:text-white transition-colors">fullscreen</span>
+              </div>
+            </div>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Chat Interaction Area */}
+      <div className="flex-1 w-full flex flex-col bg-background-light dark:bg-background-dark max-h-full">
+        <div className="px-4 py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0">
+          <span className="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">Live Chat</span>
+          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">
+            <span className="material-symbols-outlined text-primary text-[14px]">group</span>
+            <span className="text-slate-900 dark:text-slate-100 text-xs font-bold tracking-tight">1.2k</span>
+          </div>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex gap-3">
+            <img className="size-8 rounded-full shrink-0 object-cover bg-slate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVRwRelQ22gwK3h4lZoNfayPhRh16ds6a1MuaKkr19FFlPZRxQMlGuuAwHm1f8u-Ltq7PZRPgRXVi-7FAKgQPkTtXsMXZSSeLDojs7sTamO0DNl8Wupc-GdZNmfXTeU6t9ULUwGWQGc82SUayqlhezrqI9vn2unOwDkPkXgq1FSYuGnedlqU1zaTdWmPSODXs76tYWcuGd5EBNWPthCcUyIsWjqRFuvA1RfIvRFbRec0i3_t1DZFW87mG7Bp7x1IWPn5NGUGM0bx4" alt="Marcus" />
+            <div className="flex flex-col">
+              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400">Marcus Wright</p>
+              <p className="text-sm bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700/50 p-2.5 rounded-r-2xl rounded-bl-2xl mt-1">This scene is absolutely incredible in 4K! 🎬</p>
+            </div>
+          </div>
+          
+          <div className="flex gap-3 justify-end">
+            <div className="flex flex-col items-end">
+              <p className="text-[11px] font-bold text-primary">You</p>
+              <p className="text-sm bg-gradient-to-r from-primary to-cobalt-accent shadow-md shadow-primary/20 border border-primary/20 text-white p-2.5 rounded-l-2xl rounded-br-2xl mt-1">Wait for the twist coming in 5 minutes...</p>
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <img className="size-8 rounded-full shrink-0 object-cover bg-slate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADodgsv75EqPEV1gafDOXYtwbOk5qfwleFgp9hIQvPQ8w4EAXFi5DC5k-QopWNJklZkLkWfYqaUjajAx6SVRL2AT4iMbRtvOkJMnBNCebnO-2-_qWxttiTNiB4ZE8c3yqb2fplJoaWHP4sxR2xFb6_-msvhvEAAty1LPhMx_7uf4yzzRO28FnYuByRLhx3ogJaRvGJ2_ab1YKMB1fqBhzehUQ85_douRTBaP_3EVlvlhp73T--bpuo8UiF_9d7MXP8ORzVGX2FcIY" alt="Sarah" />
+            <div className="flex flex-col">
+              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400">Sarah Jenkins</p>
+              <p className="text-sm bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700/50 p-2.5 rounded-r-2xl rounded-bl-2xl mt-1">Don't spoil it! haha 😂</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Chat Input */}
+        <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shrink-0">
+          <div className="flex items-center gap-3 bg-slate-100 dark:bg-slate-800/80 rounded-full pl-4 pr-1.5 py-1.5 border border-slate-200 dark:border-slate-700/50 focus-within:border-primary/50 transition-colors shadow-inner">
+            <span className="material-symbols-outlined text-slate-400 text-lg">sentiment_satisfied</span>
+            <input 
+              className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-1.5 placeholder:text-slate-500 text-slate-900 dark:text-white outline-none" 
+              placeholder="Message group..." 
+              type="text"
+            />
+            <button className="flex shrink-0 items-center justify-center size-8 bg-gradient-to-br from-primary to-cobalt-accent rounded-full text-white shadow-md shadow-primary/20 hover:scale-105 transition-transform">
+              <span className="material-symbols-outlined text-[16px]">send</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

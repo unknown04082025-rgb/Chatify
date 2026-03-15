@@ -1,32 +1,23 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useAppStore } from '@/lib/store';
 import { MOCK_USERS } from '@/lib/mock-data';
 import { formatRelativeTime, formatMessageTime } from '@/lib/crypto';
-import {
-  Search, Phone, Video, MoreVertical, Send, Mic, Camera, MapPin,
-  Zap, Lock, Trash2, Eye, Image, Smile, Hash, ChevronLeft,
-  MicOff, Square, Play, Pause, PhoneIncoming
-} from 'lucide-react';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 // ─── Typing Indicator ────────────────────────────────
 function TypingIndicator({ isTyping }: { isTyping: boolean }) {
+  if (!isTyping) return null;
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 0' }}>
-      <div style={{
-        width: '10px', height: '10px', borderRadius: '50%',
-        background: 'var(--accent-violet)',
-        boxShadow: '0 0 8px rgba(124, 58, 237, 0.6)',
-        animation: isTyping ? 'bounce-dot 0.6s infinite alternate' : 'none',
-        transition: 'all 0.3s',
-        transform: isTyping ? undefined : 'scale(1)',
-      }} />
-      {isTyping && (
-        <span style={{ fontSize: '12px', color: 'var(--accent-violet)', fontWeight: 500 }}>typing...</span>
-      )}
+    <div className="flex items-center gap-3 animate-pulse">
+      <div className="glass-bubble px-4 py-2 rounded-full">
+        <div className="flex gap-1">
+          <span className="size-1.5 rounded-full bg-slate-400"></span>
+          <span className="size-1.5 rounded-full bg-slate-400"></span>
+          <span className="size-1.5 rounded-full bg-slate-400"></span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -34,16 +25,16 @@ function TypingIndicator({ isTyping }: { isTyping: boolean }) {
 // ─── Wave bars for voice ──────────────────────────────
 function VoiceWaveform({ bars = 8, isPlaying = false, isSelf = false }: { bars?: number, isPlaying?: boolean, isSelf?: boolean }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '3px', height: '24px' }}>
+    <div className="flex items-center gap-1 h-6">
       {Array.from({ length: bars }).map((_, i) => (
-        <div key={i} style={{
-          width: '3px', borderRadius: '2px',
-          background: isSelf ? 'rgba(255,255,255,0.8)' : 'var(--accent-violet)',
-          height: `${Math.random() * 16 + 6}px`,
-          animation: isPlaying ? 'wave-bounce 1s infinite ease-in-out alternate' : 'none',
-          animationDelay: `${i * 0.1}s`,
-          animationDuration: `${0.4 + Math.random() * 0.3}s`,
-        }} />
+        <div key={i} 
+          className={`w-1 rounded-sm ${isSelf ? 'bg-white/80' : 'bg-primary'}`}
+          style={{
+            height: `${Math.random() * 16 + 6}px`,
+            animation: isPlaying ? 'wave-bounce 1s infinite ease-in-out alternate' : 'none',
+            animationDelay: `${i * 0.1}s`,
+            animationDuration: `${0.4 + Math.random() * 0.3}s`,
+          }} />
       ))}
     </div>
   );
@@ -74,17 +65,12 @@ function VoiceMessage({ content, isSelf }: { content: string, isSelf: boolean })
   const togglePlay = () => setIsPlaying(!isPlaying);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <button onClick={togglePlay} style={{
-        background: isSelf ? 'rgba(255,255,255,0.2)' : 'var(--gradient-primary)',
-        border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%', width: '32px', height: '32px',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white',
-        flexShrink: 0, boxShadow: isSelf ? 'none' : '0 4px 12px rgba(124,58,237,0.3)',
-      }}>
-        {isPlaying ? <Square size={12} fill="currentColor" /> : <Play size={12} fill="currentColor" style={{ marginLeft: '2px' }} />}
+    <div className="flex items-center gap-3">
+      <button onClick={togglePlay} className={`size-8 rounded-full flex items-center justify-center shrink-0 transition-colors ${isSelf ? 'bg-white/20 text-white hover:bg-white/30' : 'bg-primary text-white hover:bg-primary/90 shadow-[0_4px_12px_rgba(36,99,235,0.3)]'}`}>
+        <span className="material-symbols-outlined text-[18px]">{isPlaying ? 'stop' : 'play_arrow'}</span>
       </button>
       <VoiceWaveform bars={12} isPlaying={isPlaying} isSelf={isSelf} />
-      <span style={{ fontSize: '11px', opacity: 0.9, minWidth: '35px', fontWeight: 600 }}>
+      <span className="text-[11px] opacity-90 min-w-[35px] font-semibold">
         0:{String(isPlaying ? progress : totalSeconds).padStart(2, '0')}
       </span>
     </div>
@@ -96,32 +82,32 @@ function AfterViewMessage({ content }: { content: string }) {
 
   if (state === 'hidden') {
     return (
-      <div onClick={() => setState('confirming')} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '4px' }}>
-        <Eye size={18} style={{ color: '#f59e0b' }} />
-        <span style={{ fontSize: '14px', fontStyle: 'italic', opacity: 0.9, color: '#f59e0b' }}>Tap to view secure message</span>
+      <div onClick={() => setState('confirming')} className="flex items-center gap-2 cursor-pointer p-1">
+        <span className="material-symbols-outlined text-amber-500 text-lg">visibility</span>
+        <span className="text-sm italic opacity-90 text-amber-500">Tap to view secure message</span>
       </div>
     );
   }
 
   if (state === 'confirming') {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <span style={{ fontSize: '14px', fontWeight: 600 }}>Message will permanently disappear after viewing. View now?</span>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={() => setState('visible')} style={{ padding: '6px 14px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', border: 'none', borderRadius: '8px', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>Yes, view it</button>
-          <button onClick={() => setState('hidden')} style={{ padding: '6px 14px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: 'white', cursor: 'pointer', fontSize: '13px' }}>Cancel</button>
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-semibold">Message will permanently disappear after viewing. View now?</span>
+        <div className="flex gap-2">
+          <button onClick={() => setState('visible')} className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg text-white text-xs font-bold transition-transform active:scale-95">Yes, view it</button>
+          <button onClick={() => setState('hidden')} className="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-white text-xs font-semibold transition-colors hover:bg-white/20">Cancel</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Eye size={14} style={{ color: '#f59e0b' }} />
-        <span style={{ fontSize: '15px' }}>{content}</span>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <span className="material-symbols-outlined text-amber-500 text-sm">visibility</span>
+        <span className="text-sm">{content}</span>
       </div>
-      <div style={{ fontSize: '10px', color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(245,158,11,0.1)', padding: '4px 8px', borderRadius: '8px', width: 'fit-content' }}>
+      <div className="text-[10px] text-amber-500 flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-md w-fit">
         ⚠️ Will disappear when you leave chat
       </div>
     </div>
@@ -149,42 +135,35 @@ function SnapMessage({ content }: { content: string }) {
 
   if (state === 'viewed') {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.5 }}>
-        <Zap size={14} color="#f59e0b" />
-        <span style={{ fontSize: '14px', fontStyle: 'italic', textDecoration: 'line-through' }}>Snap viewed</span>
+      <div className="flex items-center gap-2 opacity-50">
+        <span className="material-symbols-outlined text-amber-500 text-sm">bolt</span>
+        <span className="text-sm italic line-through">Snap viewed</span>
       </div>
     );
   }
 
   if (state === 'viewing') {
     return (
-      <div className="snap-overlay" style={{ zIndex: 9999 }}>
-        <div style={{ position: 'absolute', top: '24px', right: '24px', color: 'white', fontSize: '28px', fontWeight: 800, background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: '16px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
+      <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/90 p-4 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="absolute top-6 right-6 text-white text-2xl font-bold bg-black/50 px-4 py-2 rounded-2xl backdrop-blur-md border border-white/10">
           {timeLeft}s
         </div>
-        <div style={{
-          width: '90%', maxWidth: '440px', height: '80%', maxHeight: '700px', borderRadius: '24px',
-          background: 'linear-gradient(135deg, #f59e0b, #ec4899)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 25px 80px rgba(245,158,11,0.5), inset 0 1px 0 rgba(255,255,255,0.2)', fontSize: '64px',
-          padding: '24px', textAlign: 'center', color: 'white', flexDirection: 'column', gap: '24px',
-          animation: 'scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}>
-          <div style={{ padding: '32px', background: 'rgba(255,255,255,0.15)', borderRadius: '50%', border: '4px solid rgba(255,255,255,0.3)', backdropFilter: 'blur(10px)' }}>📸</div>
-          <div style={{ fontSize: '28px', fontWeight: 700, textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>{content}</div>
+        <div className="w-[90%] max-w-md aspect-[3/4] rounded-3xl bg-gradient-to-br from-amber-500 to-pink-500 flex flex-col items-center justify-center p-8 text-center text-white shadow-[0_25px_80px_rgba(245,158,11,0.5),inset_0_1px_0_rgba(255,255,255,0.2)] animate-in zoom-in-95 duration-300">
+          <div className="p-6 bg-white/15 rounded-full border-4 border-white/30 backdrop-blur-md mb-8 text-5xl">📸</div>
+          <div className="text-3xl font-bold drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">{content}</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div onClick={() => setState('viewing')} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '12px 16px', background: 'linear-gradient(90deg, rgba(245,158,11,0.1), transparent)', borderRadius: '12px', border: '1px solid rgba(245,158,11,0.2)' }}>
-      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 4px 12px rgba(245,158,11,0.4)' }}>
-        <Zap size={16} fill="white" />
+    <div onClick={() => setState('viewing')} className="flex items-center gap-3 cursor-pointer px-4 py-3 bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl border border-amber-500/20 hover:from-amber-500/20 transition-colors">
+      <div className="size-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white shadow-[0_4px_12px_rgba(245,158,11,0.4)]">
+        <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: "'FILL' 1"}}>bolt</span>
       </div>
       <div>
-        <div style={{ fontSize: '15px', fontWeight: 600, color: '#fcd34d' }}>New Snap</div>
-        <div style={{ fontSize: '11px', opacity: 0.8, color: '#f59e0b' }}>Tap to view • Disappears in 5s</div>
+        <div className="text-sm font-bold text-amber-300">New Snap</div>
+        <div className="text-[11px] opacity-80 text-amber-500">Tap to view • Disappears in 5s</div>
       </div>
     </div>
   );
@@ -254,9 +233,9 @@ export default function ChatsPage() {
   });
 
   const msgTypeConfig = {
-    normal: { icon: <Send size={14} />, label: 'Normal' },
-    'after-view': { icon: <Eye size={14} />, label: 'After-view' },
-    'timed-delete': { icon: <Trash2 size={14} />, label: 'Delete in 3h' },
+    normal: { icon: 'send', label: 'Normal' },
+    'after-view': { icon: 'visibility', label: 'After-view' },
+    'timed-delete': { icon: 'delete', label: 'Delete in 3h' },
   };
 
   const executeCall = () => {
@@ -274,14 +253,10 @@ export default function ChatsPage() {
   };
 
   return (
-    <div style={{ display: 'flex', height: 'calc(100vh - var(--nav-height))', overflow: 'hidden' }}>
+    <div className="flex h-[calc(100vh-var(--nav-height))] w-full bg-background-light dark:bg-[#0b0e14]">
       
       {/* Mesh Background for empty state / transparency */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: 'radial-gradient(at 0% 0%, rgba(124,58,237,0.06) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(236,72,153,0.04) 0px, transparent 50%)',
-        zIndex: -1, pointerEvents: 'none',
-      }} />
+      <div className="absolute inset-0 bg-gradient-mesh opacity-30 pointer-events-none -z-10" />
 
       <ConfirmDialog
         isOpen={confirmCall !== null}
@@ -300,86 +275,76 @@ export default function ChatsPage() {
         onCancel={() => setConfirmClear(null)}
       />
 
-      {/* ── Sidebar: Chat List ── */}
-      <div
-        className={activeChatId ? 'desktop-only' : ''}
-        style={{
-          width: activeChatId ? undefined : '100%',
-          minWidth: '340px', maxWidth: '340px',
-          borderRight: '1px solid rgba(255,255,255,0.06)',
-          display: activeChatId ? 'none' : 'flex',
-          flexDirection: 'column',
-          background: 'rgba(12,17,35,0.6)', backdropFilter: 'blur(10px)',
-        }}
+      {/* ── Sidebar: Chat List (Mobile Hub Style) ── */}
+      <aside
+        className={`${activeChatId ? 'hidden md:flex' : 'flex'} w-full md:w-80 lg:w-[340px] flex-col border-r border-slate-200/10 bg-[#131022]/90 backdrop-blur-xl shrink-0`}
       >
-        <div style={{ padding: '24px 20px 16px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 800, letterSpacing: '-0.02em', background: 'var(--gradient-primary)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Chats</h2>
-            <div className="encrypt-badge">🔒 AES-256</div>
+        <div className="p-6 pb-4 border-b border-white/5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold tracking-tight text-slate-100">Chats</h2>
+            <div className="px-2 py-1 rounded border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold tracking-widest uppercase flex items-center gap-1">
+              <span className="material-symbols-outlined text-[12px]">lock</span>
+              AES-256
+            </div>
           </div>
-          <div style={{ position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-            <input type="text" className="input-field" style={{ paddingLeft: '44px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
-              placeholder="Search conversations..." value={search} onChange={(e) => setSearch(e.target.value)} id="chats-search" />
+          
+          <div className="relative">
+            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">search</span>
+            <input 
+              type="text" 
+              className="w-full bg-slate-900/50 border border-slate-700/50 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-slate-500 text-slate-100 transition-all"
+              placeholder="Search conversations..." 
+              value={search} 
+              onChange={(e) => setSearch(e.target.value)} 
+            />
           </div>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
+        <div className="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar">
           {filteredChats.map((chat) => {
             const other = getOtherUser(chat);
             if (!other) return null;
+            const isActive = activeChatId === chat.id;
+
             return (
-              <button key={chat.id} id={`chat-item-${chat.id}`}
+              <button key={chat.id}
                 onClick={() => setActiveChat(chat.id)}
-                style={{
-                  width: '100%', display: 'flex', alignItems: 'center', gap: '14px',
-                  padding: '14px 16px', borderRadius: '16px',
-                  background: activeChatId === chat.id ? 'linear-gradient(90deg, rgba(124,58,237,0.15), rgba(124,58,237,0.02))' : 'transparent',
-                  border: activeChatId === chat.id ? '1px solid rgba(124,58,237,0.3)' : '1px solid transparent',
-                  cursor: 'pointer', transition: 'all 0.2s', textAlign: 'left',
-                  boxShadow: activeChatId === chat.id ? 'inset 4px 0 0 var(--accent-violet)' : 'none',
-                }}
-                onMouseEnter={(e) => { if (activeChatId !== chat.id) e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
-                onMouseLeave={(e) => { if (activeChatId !== chat.id) e.currentTarget.style.background = 'transparent'; }}
+                className={`w-full flex items-center gap-4 p-3.5 rounded-xl cursor-pointer transition-all border outline-none ${
+                    isActive 
+                    ? 'glass-panel border-l-4 border-l-primary border-t-white/5 border-r-white/5 border-b-white/5 bg-slate-800/40' 
+                    : 'border-transparent hover:bg-slate-800/30 hover:border-slate-200/5'
+                }`}
               >
-                <div style={{ position: 'relative', flexShrink: 0 }}>
-                  <div style={{
-                    width: '52px', height: '52px', borderRadius: '16px',
-                    background: 'var(--gradient-primary)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '26px', boxShadow: activeChatId === chat.id ? '0 0 15px rgba(124,58,237,0.4)' : 'none',
-                    transition: 'all 0.3s',
-                  }}>{other.avatar}</div>
-                  <div style={{
-                    position: 'absolute', bottom: '-2px', right: '-2px',
-                    width: '14px', height: '14px', borderRadius: '50%',
-                    background: other.status === 'available' ? '#10b981' : '#475569',
-                    border: '3px solid rgba(12,17,35,1)',
-                  }} />
+                <div className="relative shrink-0">
+                  <div className={`size-12 rounded-full overflow-hidden flex items-center justify-center text-2xl bg-gradient-to-br from-primary/80 to-purple-600/80 shadow-lg ${isActive ? 'border-2 border-primary/50' : 'border border-slate-200/10'}`}>
+                    {other.avatar}
+                  </div>
+                  {other.status === 'available' ? (
+                    <div className="absolute bottom-0 -right-0.5 size-3.5 bg-green-500 rounded-full border-2 border-[#131022] neon-glow" />
+                  ) : (
+                    <div className="absolute bottom-0 -right-0.5 size-3.5 bg-slate-500 rounded-full border-2 border-[#131022]" />
+                  )}
                 </div>
 
-                <div style={{ flex: 1, overflow: 'hidden' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                    <span style={{ fontWeight: 600, fontSize: '15px' }}>{other.displayName}</span>
-                    <span style={{ fontSize: '11px', color: activeChatId === chat.id ? 'var(--accent-violet)' : 'var(--text-muted)' }}>
+                <div className="flex-1 min-w-0 text-left">
+                  <div className="flex justify-between items-baseline mb-0.5">
+                    <h3 className={`font-semibold truncate ${isActive ? 'text-slate-100' : 'text-slate-200'}`}>{other.displayName}</h3>
+                    <span className={`text-[11px] font-medium ${isActive ? 'text-primary' : 'text-slate-500'}`}>
                       {chat.lastMessage ? formatRelativeTime(chat.lastMessage.timestamp) : ''}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{
-                      fontSize: '13px', color: 'var(--text-secondary)',
-                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '180px',
-                    }}>
-                      {chat.isTyping ? <span style={{ color: 'var(--accent-violet)', fontWeight: 500 }}>typing...</span> : (chat.lastMessage?.content || 'Say hello!')}
-                    </span>
+                  <div className="flex justify-between items-center gap-2 mt-1">
+                    <p className={`text-xs truncate ${chat.unreadCount > 0 ? 'text-slate-200 font-medium' : 'text-slate-500'}`}>
+                      {chat.isTyping ? (
+                         <span className="text-primary font-medium animate-pulse">typing...</span>
+                      ) : (
+                         chat.lastMessage?.content || 'Say hello!'
+                      )}
+                    </p>
                     {chat.unreadCount > 0 && (
-                      <div style={{
-                        minWidth: '22px', height: '22px', borderRadius: '11px',
-                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '11px', fontWeight: 700, color: 'white', padding: '0 6px',
-                        boxShadow: '0 0 10px rgba(239, 68, 68, 0.5)',
-                      }}>{chat.unreadCount}</div>
+                      <div className="size-5 bg-primary rounded-full flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(36,99,235,0.6)]">
+                         <span className="text-[10px] font-bold text-white leading-none">{chat.unreadCount}</span>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -387,275 +352,211 @@ export default function ChatsPage() {
             );
           })}
         </div>
-      </div>
+      </aside>
 
-      {/* ── Chat Window ── */}
+      {/* ── Chat Area (Desktop Dashboard Style) ── */}
       {activeChatId && activeChat ? (() => {
         const other = getOtherUser(activeChat)!;
         return (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
+          <main className="flex-1 flex flex-col min-w-0 relative">
             
-            {/* Header */}
-            <div style={{
-              padding: '16px 24px',
-              borderBottom: '1px solid rgba(255,255,255,0.06)',
-              display: 'flex', alignItems: 'center', gap: '16px',
-              background: 'rgba(10,14,26,0.85)', backdropFilter: 'blur(20px)',
-              zIndex: 10,
-            }}>
-              <button className="mobile-only" onClick={() => setActiveChat(null)}
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '8px', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex' }}>
-                <ChevronLeft size={20} />
-              </button>
-              <div style={{ position: 'relative' }}>
-                <div style={{
-                  width: '46px', height: '46px', borderRadius: '14px',
-                  background: 'var(--gradient-primary)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px',
-                  boxShadow: '0 4px 15px rgba(124,58,237,0.3)',
-                }}>{other.avatar}</div>
-                <div style={{
-                  position: 'absolute', bottom: '-2px', right: '-2px',
-                  width: '12px', height: '12px', borderRadius: '50%',
-                  background: other.status === 'available' ? '#10b981' : '#475569',
-                  border: '2px solid rgba(10,14,26,1)',
-                }} />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: '16px' }}>{other.displayName}</div>
-                <div style={{ fontSize: '12px', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  {isTyping
-                    ? <TypingIndicator isTyping={true} />
-                    : <span className={other.status === 'available' ? 'status-available' : 'status-not-available'} style={{ fontSize: '11px', fontWeight: 600 }}>
-                      {other.status === 'available' ? '● Available' : '○ Offline'}
-                    </span>
-                  }
-                  <span style={{ color: 'var(--text-muted)' }}>• @{other.username}</span>
+            {/* Header Section */}
+            <header className="h-20 flex items-center justify-between px-6 glass-panel border-b border-slate-200/10 z-10 shrink-0">
+              <div className="flex items-center gap-4">
+                <button className="md:hidden size-10 flex items-center justify-center rounded-full glass-panel hover:bg-white/5 transition-colors" onClick={() => setActiveChat(null)}>
+                  <span className="material-symbols-outlined text-slate-300">arrow_back</span>
+                </button>
+                <div className="flex items-center gap-4">
+                  <div className="relative shrink-0">
+                    <div className="size-11 rounded-full flex items-center justify-center text-2xl bg-gradient-to-br from-primary/80 to-purple-600/80 shadow-lg border border-white/10">
+                      {other.avatar}
+                    </div>
+                    {other.status === 'available' ? (
+                       <div className="absolute bottom-0 -right-0.5 size-3 bg-green-500 rounded-full border-2 border-background-dark neon-glow" />
+                    ) : (
+                       <div className="absolute bottom-0 -right-0.5 size-3 bg-slate-500 rounded-full border-2 border-background-dark" />
+                    )}
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-slate-100">{other.displayName}</h2>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      {isTyping ? (
+                         <span className="text-xs text-primary font-medium flex items-center gap-1">
+                            <span className="animate-pulse">typing...</span>
+                         </span>
+                      ) : (
+                         <>
+                            <span className={`size-1.5 rounded-full ${other.status === 'available' ? 'bg-green-500 neon-glow' : 'bg-slate-500'}`}></span>
+                            <span className="text-[11px] font-medium text-slate-400">@{other.username}</span>
+                         </>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-              
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button id="simulate-incoming-btn" title="Simulate Incoming Call" onClick={() => receiveCall(other.id, 'video')}
-                  style={{ background: 'rgba(236,72,153,0.1)', border: '1px solid rgba(236,72,153,0.2)', borderRadius: '12px', padding: '10px', cursor: 'pointer', color: '#ec4899', display: 'flex', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(236,72,153,0.2)'} onMouseLeave={e => e.currentTarget.style.background='rgba(236,72,153,0.1)'}>
-                  <PhoneIncoming size={18} />
-                </button>
-                <button id="voice-call-btn" onClick={() => setConfirmCall({ partnerId: other.id, type: 'voice' })}
-                  style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '12px', padding: '10px', cursor: 'pointer', color: '#10b981', display: 'flex', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(16,185,129,0.2)'} onMouseLeave={e => e.currentTarget.style.background='rgba(16,185,129,0.1)'}>
-                  <Phone size={18} />
-                </button>
-                <button id="video-call-btn" onClick={() => setConfirmCall({ partnerId: other.id, type: 'video' })}
-                  style={{ background: 'var(--gradient-primary)', border: 'none', borderRadius: '12px', padding: '10px', cursor: 'pointer', color: 'white', display: 'flex', transition: 'all 0.2s', boxShadow: '0 4px 15px rgba(124,58,237,0.3)' }} onMouseEnter={e => e.currentTarget.style.transform='translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
-                  <Video size={18} />
-                </button>
-                <div style={{ width: '1px', background: 'rgba(255,255,255,0.06)', margin: '0 4px' }} />
-                <button id="clear-chat-btn" onClick={() => setConfirmClear(other.id)}
-                  style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '12px', padding: '10px', cursor: 'pointer', color: '#ef4444', display: 'flex', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.2)'} onMouseLeave={e => e.currentTarget.style.background='rgba(239,68,68,0.1)'}>
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            </div>
 
-            {/* Messages Area */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div className="flex items-center gap-2">
+                <button title="Simulate Incoming" onClick={() => receiveCall(other.id, 'video')} className="size-10 hidden sm:flex items-center justify-center rounded-full bg-pink-500/10 text-pink-500 hover:bg-pink-500/20 hover:scale-105 transition-all">
+                  <span className="material-symbols-outlined text-[20px]">phone_in_talk</span>
+                </button>
+                <button onClick={() => setConfirmCall({ partnerId: other.id, type: 'voice' })} className="size-10 flex items-center justify-center rounded-full bg-slate-800/80 border border-white/5 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300 hover:border-emerald-500/20 transition-all">
+                  <span className="material-symbols-outlined text-[20px]">call</span>
+                </button>
+                <button onClick={() => setConfirmCall({ partnerId: other.id, type: 'video' })} className="size-10 flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/30 transition-all hover:scale-105">
+                  <span className="material-symbols-outlined text-[20px]">videocam</span>
+                </button>
+                <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block"></div>
+                <button onClick={() => setConfirmClear(other.id)} className="size-10 hidden sm:flex items-center justify-center rounded-full bg-slate-800/80 border border-white/5 text-red-400 hover:bg-red-500/10 hover:text-red-300 hover:border-red-500/20 transition-all">
+                  <span className="material-symbols-outlined text-[20px]">delete</span>
+                </button>
+              </div>
+            </header>
+
+            {/* Chat Area Messages */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 flex flex-col pt-6">
               
-              {/* Encryption Banner */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-                <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', color: '#fcd34d', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '6px', backdropFilter: 'blur(4px)' }}>
-                  <Lock size={12} /> Messages are end-to-end encrypted. Nobody else can read them.
+              <div className="text-center mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400/90 text-[10px] font-bold tracking-widest uppercase mb-4 backdrop-blur-sm">
+                  <span className="material-symbols-outlined text-[14px]">lock</span>
+                  End-to-End Encrypted
                 </div>
+                <div className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">Today</div>
               </div>
 
               {chatMessages.map((msg) => {
                 const isSelf = msg.senderId === currentUser?.id;
                 const sender = MOCK_USERS.find((u) => u.id === msg.senderId);
+                
                 return (
-                  <div key={msg.id} style={{
-                    display: 'flex',
-                    justifyContent: isSelf ? 'flex-end' : 'flex-start',
-                    gap: '12px', alignItems: 'flex-end',
-                    animation: 'fadeInUp 0.3s ease forwards',
-                  }}>
+                  <div key={msg.id} className={`flex items-end gap-3 max-w-[85%] sm:max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-300 ${isSelf ? 'justify-end ml-auto' : ''}`}>
                     {!isSelf && (
-                      <div style={{
-                        width: '32px', height: '32px', borderRadius: '10px',
-                        background: 'var(--gradient-primary)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '16px', flexShrink: 0,
-                      }}>{sender?.avatar}</div>
-                    )}
-                    <div style={{
-                      maxWidth: '72%',
-                      background: isSelf ? 'var(--gradient-primary)' : 'rgba(255,255,255,0.03)',
-                      border: isSelf ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.06)',
-                      borderRadius: isSelf ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
-                      padding: msg.type === 'voice' ? '12px 18px' : '12px 16px',
-                      boxShadow: isSelf ? '0 8px 25px rgba(124,58,237,0.3)' : '0 4px 15px rgba(0,0,0,0.2)',
-                      backdropFilter: isSelf ? 'none' : 'blur(10px)',
-                    }}>
-                      {/* Message body */}
-                      {msg.type === 'voice' ? (
-                        <VoiceMessage content={msg.content} isSelf={isSelf} />
-                      ) : msg.type === 'after-view' ? (
-                        <AfterViewMessage content={msg.content} />
-                      ) : msg.type === 'snap' ? (
-                        <SnapMessage content={msg.content} />
-                      ) : msg.type === 'timed-delete' ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Trash2 size={16} />
-                          <span style={{ fontSize: '15px' }}>{msg.content}</span>
-                          <span style={{ fontSize: '10px', opacity: 0.8, color: '#fca5a5', background: 'rgba(239,68,68,0.2)', padding: '2px 8px', borderRadius: '6px' }}>Deletes in 3h</span>
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: '15px', lineHeight: 1.5, textShadow: isSelf ? '0 1px 2px rgba(0,0,0,0.2)' : 'none' }}>{msg.content}</span>
-                      )}
-
-                      {/* Timestamp + encrypt */}
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px', marginTop: '6px', alignItems: 'center' }}>
-                        {msg.encrypted && <Lock size={10} style={{ opacity: isSelf ? 0.8 : 0.5 }} color={isSelf ? 'white' : 'var(--accent-emerald)'} />}
-                        <span style={{ fontSize: '10px', opacity: 0.7, color: isSelf ? 'white' : 'var(--text-muted)' }}>{formatMessageTime(msg.timestamp)}</span>
+                      <div className="size-8 rounded-full bg-gradient-to-br from-primary/80 to-purple-600/80 shrink-0 mb-1 flex items-center justify-center text-sm shadow-sm border border-white/10">
+                        {sender?.avatar}
                       </div>
+                    )}
+                    
+                    <div className={`space-y-1 ${isSelf ? 'text-right' : ''}`}>
+                      <p className={`text-[10px] font-medium text-slate-500 ${isSelf ? 'mr-2' : 'ml-2'}`}>
+                        {isSelf ? 'Me' : sender?.displayName} • {formatMessageTime(msg.timestamp)}
+                      </p>
+                      
+                      <div className={`
+                        p-3.5 sm:p-4 rounded-2xl 
+                        ${isSelf ? 'glass-bubble-primary rounded-br-none text-white shadow-lg shadow-primary/20' : 'glass-bubble rounded-bl-none text-slate-200 shadow-sm border-white/5'}
+                      `}>
+                        {msg.type === 'voice' ? (
+                          <VoiceMessage content={msg.content} isSelf={isSelf} />
+                        ) : msg.type === 'after-view' ? (
+                          <AfterViewMessage content={msg.content} />
+                        ) : msg.type === 'snap' ? (
+                          <SnapMessage content={msg.content} />
+                        ) : msg.type === 'timed-delete' ? (
+                          <div className="flex items-center gap-2">
+                             <span className="material-symbols-outlined text-sm">delete</span>
+                             <span className="text-sm">{msg.content}</span>
+                             <span className="text-[9px] px-2 py-0.5 rounded bg-red-500/20 text-red-300 ml-1/2 border border-red-500/20">3h</span>
+                          </div>
+                        ) : (
+                          <div className="text-sm leading-relaxed whitespace-pre-wrap word-break">{msg.content}</div>
+                        )}
+                      </div>
+                      
+                      {isSelf && (
+                        <div className="flex items-center justify-end gap-1 mt-1 pr-1">
+                          {msg.encrypted && <span className="material-symbols-outlined text-slate-500 text-[11px]" style={{fontVariationSettings: "'FILL' 1"}}>lock</span>}
+                          <span className="material-symbols-outlined text-primary text-[14px]">done_all</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
               })}
 
-              {/* Typing indicator from friend */}
-              {isTyping && (
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', animation: 'fadeIn 0.3s ease forwards' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--gradient-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>
-                    {other.avatar}
-                  </div>
-                  <div style={{
-                    background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
-                    borderRadius: '20px 20px 20px 4px', padding: '14px 18px',
-                    display: 'flex', gap: '6px', alignItems: 'center', backdropFilter: 'blur(10px)',
-                  }}>
-                    {[0, 0.2, 0.4].map((delay, i) => (
-                      <div key={i} style={{
-                        width: '8px', height: '8px', borderRadius: '50%',
-                        background: 'var(--accent-violet)',
-                        animation: `bounce-dot 0.8s ${delay}s infinite alternate`,
-                        boxShadow: '0 0 8px rgba(124,58,237,0.5)',
-                      }} />
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Typing Indicator */}
+              <TypingIndicator isTyping={isTyping} />
+              
               <div ref={messagesEndRef} />
             </div>
 
             {/* Input Area */}
-            <div style={{
-              padding: '16px 24px',
-              borderTop: '1px solid rgba(255,255,255,0.06)',
-              background: 'rgba(10,14,26,0.85)', backdropFilter: 'blur(20px)',
-              position: 'relative', zIndex: 10,
-            }}>
-              {/* Message Type Selector */}
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
-                {(Object.keys(msgTypeConfig) as Array<keyof typeof msgTypeConfig>).map((type) => (
-                  <button key={type} id={`msg-type-${type}`}
-                    onClick={() => setMsgType(type)}
-                    style={{
-                      padding: '6px 14px', borderRadius: '10px', fontSize: '12px',
-                      fontWeight: msgType === type ? 600 : 500,
-                      background: msgType === type ? `linear-gradient(90deg, rgba(124,58,237,0.2), rgba(124,58,237,0.05))` : 'rgba(255,255,255,0.03)',
-                      border: msgType === type ? '1px solid rgba(124,58,237,0.5)' : '1px solid rgba(255,255,255,0.06)',
-                      color: msgType === type ? 'white' : 'var(--text-muted)',
-                      cursor: 'pointer', transition: 'all 0.2s',
-                      display: 'flex', alignItems: 'center', gap: '6px',
-                      boxShadow: msgType === type ? '0 0 15px rgba(124,58,237,0.15)' : 'none',
-                    }}>
-                    {msgTypeConfig[type].icon}
-                    {msgTypeConfig[type].label}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end' }}>
-                {/* Attachment buttons */}
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button id="snap-btn" title="Send Snap"
-                    onClick={handleSendSnap}
-                    style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(236,72,153,0.15))', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '14px', padding: '12px', cursor: 'pointer', color: '#f59e0b', display: 'flex', boxShadow: '0 4px 15px rgba(245,158,11,0.2)', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform='translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
-                    <Zap size={20} />
-                  </button>
-                  <button id="image-btn" title="Attach Media"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '12px', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.1)'} onMouseLeave={e => e.currentTarget.style.background='rgba(255,255,255,0.05)'}>
-                    <Image size={20} />
-                  </button>
+            <footer className="glass-panel border-t border-slate-200/10 p-4 sm:p-6 shrink-0 z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+              <div className="max-w-4xl mx-auto">
+                <div className="flex gap-2 mb-3 overflow-x-auto no-scrollbar pb-1">
+                  {(Object.keys(msgTypeConfig) as Array<keyof typeof msgTypeConfig>).map((type) => {
+                    const isActive = msgType === type;
+                    return (
+                    <button key={type} onClick={() => setMsgType(type)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 border
+                        ${isActive 
+                          ? 'bg-primary/20 border-primary/50 text-primary shadow-[0_0_10px_rgba(36,99,235,0.2)]' 
+                          : 'bg-slate-800/40 border-white/5 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'}`
+                      }>
+                      <span className="material-symbols-outlined text-[16px]">{msgTypeConfig[type].icon}</span>
+                      {msgTypeConfig[type].label}
+                    </button>
+                  )})}
                 </div>
 
-                <div style={{ flex: 1, position: 'relative' }}>
-                  <input type="text" className="input-field" id="chat-input"
-                    placeholder="Type an encrypted message..."
-                    value={inputText}
-                    onChange={(e) => handleInputChange(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }}}
-                    style={{ width: '100%', padding: '14px 16px', paddingRight: '40px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', fontSize: '15px' }}
-                  />
-                  <Smile size={20} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                </div>
+                <div className="flex flex-wrap sm:flex-nowrap items-end gap-2 sm:gap-4">
+                  <button onClick={handleSendSnap} className="size-12 shrink-0 flex items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-500/20 hover:scale-105 transition-all shadow-[0_0_15px_rgba(245,158,11,0.15)] group" title="Send Secure Snap">
+                    <span className="material-symbols-outlined text-xl group-hover:text-amber-300" style={{fontVariationSettings: "'FILL' 1"}}>bolt</span>
+                  </button>
+                  <button className="size-12 shrink-0 hidden sm:flex items-center justify-center rounded-2xl bg-slate-800/50 border border-white/5 text-slate-400 hover:text-primary transition-colors hover:bg-slate-800">
+                    <span className="material-symbols-outlined pt-0.5">add_circle</span>
+                  </button>
+                  
+                  <div className="flex-1 relative w-full sm:w-auto mt-2 sm:mt-0 order-last sm:order-none">
+                    <input 
+                      type="text" 
+                      className="w-full bg-slate-900/60 border border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-slate-500 text-slate-100 transition-all pr-12 min-h-[56px]"
+                      placeholder="Type an encrypted message..." 
+                      value={inputText}
+                      onChange={(e) => handleInputChange(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }}}
+                    />
+                    <button className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[22px]">mood</span>
+                    </button>
+                  </div>
 
-                {/* Voice + Send */}
-                <div style={{ display: 'flex', gap: '8px' }}>
                   {inputText ? (
-                    <button id="send-btn" onClick={handleSend}
-                      style={{ background: 'var(--gradient-primary)', border: 'none', borderRadius: '14px', padding: '12px 18px', cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 20px rgba(124,58,237,0.4)', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform='translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
-                      <span style={{ fontWeight: 600, fontSize: '15px' }}>Send</span>
-                      <Send size={18} />
+                    <button onClick={handleSend} className="size-12 px-5 shrink-0 bg-primary hover:bg-primary/90 min-w-12 sm:min-w-fit w-12 sm:w-auto text-white rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-transform active:scale-95">
+                      <span className="font-bold hidden sm:inline">Send</span>
+                      <span className="material-symbols-outlined text-[20px]">send</span>
                     </button>
                   ) : (
-                    <button id="voice-msg-btn"
+                    <button 
                       onMouseDown={() => setIsRecording(true)}
-                      onMouseUp={() => {
-                        setIsRecording(false);
-                        if (activeChatId) sendMessage(activeChatId, '0:' + String(Math.floor(Math.random() * 40 + 5)).padStart(2, '0'), 'voice');
-                      }}
-                      style={{
-                        background: isRecording ? 'linear-gradient(135deg,#ef4444,#dc2626)' : 'var(--gradient-primary)',
-                        border: isRecording ? '2px solid #fca5a5' : '1px solid transparent',
-                        borderRadius: '50%', width: '48px', height: '48px',
-                        cursor: 'pointer', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        transition: 'all 0.2s',
-                        boxShadow: isRecording ? '0 0 30px rgba(239,68,68,0.6)' : '0 4px 20px rgba(124,58,237,0.4)',
-                        transform: isRecording ? 'scale(1.1)' : 'scale(1)',
-                      }}>
-                      {isRecording ? <MicOff size={22} /> : <Mic size={22} />}
+                      onMouseUp={() => { setIsRecording(false); if(activeChatId) sendMessage(activeChatId, '0:' + String(Math.floor(Math.random() * 40 + 5)).padStart(2, '0'), 'voice'); }}
+                      onMouseLeave={() => setIsRecording(false)}
+                      className={`size-12 shrink-0 rounded-2xl flex items-center justify-center transition-all ${
+                        isRecording 
+                        ? 'bg-red-500 hover:bg-red-600 shadow-[0_0_20px_rgba(239,68,68,0.6)] scale-110 text-white' 
+                        : 'bg-slate-800/80 hover:bg-primary/20 hover:text-primary border border-white/5 text-slate-300'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-[22px]">{isRecording ? 'mic' : 'mic_none'}</span>
                     </button>
                   )}
                 </div>
               </div>
-            </div>
-          </div>
+            </footer>
+          </main>
         );
       })() : (
-        /* Empty state on desktop */
-        <div className="desktop-only" style={{
-          flex: 1, display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center', gap: '20px',
-          color: 'var(--text-muted)', position: 'relative',
-        }}>
-          {/* Animated Background Mesh for empty state */}
-          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(at 50% 50%, rgba(124,58,237,0.08) 0px, transparent 60%)', zIndex: -1, animation: 'pulse-ring 4s infinite alternate' }} />
-          
-          <div style={{
-            width: '96px', height: '96px', borderRadius: '30px',
-            background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '42px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.2), inset 0 2px 20px rgba(255,255,255,0.05)',
-            position: 'relative', backdropFilter: 'blur(10px)',
-          }}>
-            💬
-            <div style={{ position: 'absolute', top: -10, right: -10, background: 'var(--gradient-primary)', padding: '4px', borderRadius: '50%', border: '2px solid rgba(12,17,35,1)' }}>
-              <Lock size={14} color="white" />
+        <main className="hidden md:flex flex-1 flex-col items-center justify-center p-8 relative">
+          <div className="absolute inset-0 bg-gradient-mesh opacity-20 z-0"></div>
+          <div className="z-10 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-500">
+            <div className="size-24 rounded-3xl bg-slate-800/40 border border-white/10 flex items-center justify-center text-5xl mb-6 shadow-2xl backdrop-blur-xl relative">
+              <span className="material-symbols-outlined text-primary text-[48px]" style={{fontVariationSettings: "'FILL' 1"}}>chat</span>
+              <div className="absolute -top-2 -right-2 size-8 bg-amber-500 rounded-xl border border-amber-400 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.5)] rotate-12">
+                <span className="material-symbols-outlined text-background-dark text-[18px]">lock</span>
+              </div>
             </div>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-100 mb-2">Workspace Hub</h2>
+            <p className="text-slate-400 text-sm max-w-sm">Select a conversation from the left strictly verified and end-to-end encrypted protocol.</p>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-0.02em' }}>Select a conversation</div>
-            <div style={{ fontSize: '15px' }}>Choose a friend from the list to start messaging securely</div>
-          </div>
-        </div>
+        </main>
       )}
     </div>
   );

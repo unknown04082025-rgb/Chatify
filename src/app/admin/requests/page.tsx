@@ -52,7 +52,7 @@ export default function AdminRequestsPage() {
 
             <div style={{ background: 'var(--bg-glass)', borderRadius: '12px', padding: '14px', fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.5, marginBottom: '20px' }}>
               <span style={{ color: 'var(--text-muted)', fontSize: '11px', display: 'block', marginBottom: '6px' }}>REASON</span>
-              "{req.reason}"
+              &quot;{req.reason}&quot;
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>

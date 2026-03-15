@@ -1,19 +1,16 @@
 'use client';
 import { useState } from 'react';
 import { MOCK_VAULT_ITEMS } from '@/lib/mock-data';
-import { Lock, Unlock, Shield, Upload, Image, Video, Mic, Eye, EyeOff, Trash2, Lock as LockIcon, Fingerprint } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 
 function PinDot({ filled }: { filled: boolean }) {
   return (
-    <div style={{
-      width: '16px', height: '16px', borderRadius: '50%',
-      background: filled ? 'var(--gradient-primary)' : 'rgba(255,255,255,0.03)',
-      border: `2px solid ${filled ? 'rgba(124,58,237,0.5)' : 'rgba(255,255,255,0.08)'}`,
-      boxShadow: filled ? '0 0 12px rgba(124,58,237,0.4)' : 'none',
-      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-      transform: filled ? 'scale(1.1)' : 'scale(1)',
-    }} />
+    <div className={`w-4 h-4 rounded-full border-2 transition-all duration-300 ${
+      filled 
+        ? 'bg-primary border-primary shadow-[0_0_12px_rgba(36,99,235,0.4)] scale-110' 
+        : 'bg-white/5 border-white/10 scale-100'
+    }`} />
   );
 }
 
@@ -41,247 +38,233 @@ export default function VaultPage() {
 
   if (!vaultUnlocked) {
     return (
-      <div style={{
-        minHeight: 'calc(100vh - var(--nav-height))',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '24px', position: 'relative', overflow: 'hidden',
-      }}>
-        {/* Mesh bg */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'radial-gradient(at 50% 40%, rgba(124,58,237,0.12) 0%, transparent 50%), radial-gradient(at 30% 80%, rgba(236,72,153,0.08) 0%, transparent 40%)',
-          pointerEvents: 'none',
-        }} />
-
-        <div style={{
-          background: 'rgba(12,17,35,0.9)', backdropFilter: 'blur(30px) saturate(160%)',
-          border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: '28px', padding: '52px 44px', maxWidth: '380px', width: '100%',
-          position: 'relative', zIndex: 1, textAlign: 'center',
-          boxShadow: '0 25px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)',
-          animation: 'fadeInUp 0.6s ease forwards',
-        }}>
-          {/* Vault Lock Icon */}
-          <div className="vault-lock animate-glow" style={{
-            width: '84px', height: '84px', margin: '0 auto 28px',
-            position: 'relative',
-          }}>
-            <Lock size={36} color="white" />
-            {/* Orbiting ring */}
-            <div style={{
-              position: 'absolute', inset: '-8px', borderRadius: '50%',
-              border: '1px solid transparent', borderTopColor: 'rgba(124,58,237,0.3)',
-              animation: 'spin-slow 4s linear infinite',
-            }} />
-            <div style={{
-              position: 'absolute', inset: '-16px', borderRadius: '50%',
-              border: '1px solid transparent', borderBottomColor: 'rgba(236,72,153,0.2)',
-              animation: 'spin-slow 6s linear infinite reverse',
-            }} />
-          </div>
-
-          <h1 style={{ fontSize: '26px', fontWeight: 700, marginBottom: '8px', letterSpacing: '-0.02em' }}>Vault</h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '34px' }}>
-            Enter your 4-digit PIN to unlock
-          </p>
-
-          {/* Pin dots */}
-          <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', marginBottom: '34px' }}>
-            {[0,1,2,3].map((i) => <PinDot key={i} filled={i < pin.length} />)}
-          </div>
-
-          {/* Error */}
-          {error && (
-            <div style={{
-              padding: '10px 14px', borderRadius: '12px',
-              background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.12)',
-              color: '#f87171', fontSize: '13px', marginBottom: '20px',
-              animation: 'fadeInUp 0.3s ease',
-            }}>
-              {error}
+      <div className="flex-1 flex items-center justify-center p-6 min-h-[calc(100vh-140px)] relative overflow-hidden bg-slate-50 dark:bg-slate-900/30">
+        
+        {/* Unlock/Identity Section exactly from Stitch Template */}
+        <div className={`relative p-10 md:p-12 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-950 text-center flex flex-col items-center justify-center overflow-hidden border border-slate-700 shadow-2xl max-w-md w-full animate-in fade-in zoom-in-95 duration-500 ${shaking ? 'animate-[shake_0.4s_ease-in-out]' : ''}`}>
+            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #2463eb 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
+            
+            <div className="relative group cursor-default mb-2">
+                <div className="absolute -inset-4 bg-primary/20 rounded-full blur-xl group-hover:bg-primary/30 transition-all duration-700"></div>
+                <div className="relative size-28 md:size-32 rounded-full border border-primary/50 flex flex-col items-center justify-center bg-[#111621]/90 text-primary shadow-[inset_0_0_20px_rgba(36,99,235,0.2)]">
+                    <span className="material-symbols-outlined text-5xl md:text-6xl" style={{ fontVariationSettings: "'FILL' 0, 'wght' 300" }}>fingerprint</span>
+                </div>
             </div>
-          )}
+            
+            <h1 className="text-2xl font-bold mt-6 text-white tracking-tight">Identity Verification</h1>
+            <p className="text-slate-400 mt-2 text-sm max-w-sm mb-8 font-medium">Please enter your master PIN to decrypt and access sensitive files.</p>
+            
+            {/* Pin dots */}
+            <div className="flex gap-4 justify-center mb-6">
+              {[0,1,2,3].map((i) => <PinDot key={i} filled={i < pin.length} />)}
+            </div>
 
-          {/* Numpad */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', maxWidth: '230px', margin: '0 auto' }}>
-            {['1','2','3','4','5','6','7','8','9','','0','⌫'].map((key) => (
-              <button key={key}
-                id={`pin-${key}`}
-                onClick={() => {
-                  if (key === '⌫') setPin(p => p.slice(0,-1));
-                  else if (key !== '') handlePinPress(key);
-                }}
-                style={{
-                  height: '56px', borderRadius: '14px',
-                  background: key === '' ? 'transparent' : 'rgba(255,255,255,0.03)',
-                  border: key === '' ? 'none' : '1px solid rgba(255,255,255,0.06)',
-                  color: 'var(--text-primary)', fontSize: key === '⌫' ? '18px' : '20px',
-                  fontWeight: 600, cursor: key === '' ? 'default' : 'pointer',
-                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                  fontFamily: 'Space Grotesk',
-                }}>
-                {key}
-              </button>
-            ))}
-          </div>
+            {/* Error Message */}
+            <div className={`h-6 mb-2 transition-opacity duration-300 ${error ? 'opacity-100' : 'opacity-0'}`}>
+              {error && <p className="text-red-400 text-sm font-semibold">{error}</p>}
+            </div>
 
-          <div style={{
-            marginTop: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-            color: 'var(--text-muted)', fontSize: '12px',
-          }}>
-            <Shield size={12} style={{ color: 'var(--accent-emerald)' }} />
-            AES-256 encrypted storage
-          </div>
+            {/* Numpad */}
+            <div className="grid grid-cols-3 gap-3 w-full max-w-[260px] mx-auto z-10">
+              {['1','2','3','4','5','6','7','8','9','','0','⌫'].map((key) => (
+                <button 
+                  key={key}
+                  disabled={key === ''}
+                  onClick={() => {
+                    if (key === '⌫') setPin(p => p.slice(0,-1));
+                    else if (key !== '') handlePinPress(key);
+                  }}
+                  className={`h-14 rounded-2xl flex items-center justify-center font-bold transition-all
+                    ${key === '' ? 'cursor-default opacity-0' : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-primary/50 text-white shadow-sm hover:shadow-[0_0_15px_rgba(36,99,235,0.2)] active:scale-95'}
+                    ${key === '⌫' ? 'text-xl text-slate-400 hover:text-white' : 'text-2xl'}
+                  `}
+                >
+                  {key}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-8 flex items-center gap-2 text-emerald-500/80 text-xs font-bold uppercase tracking-wider bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">
+              <span className="material-symbols-outlined text-sm">lock</span>
+              AES-256 Encrypted
+            </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '24px', maxWidth: '960px', margin: '0 auto', animation: 'fadeInUp 0.5s ease forwards' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{
-            width: '42px', height: '42px', borderRadius: '14px',
-            background: 'var(--gradient-primary)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 25px rgba(124,58,237,0.3)',
-          }}>
-            <Unlock size={18} color="white" />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '22px', fontWeight: 700, letterSpacing: '-0.02em' }}>Vault</h1>
-            <div className="encrypt-badge">AES-256 Encrypted</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button id="upload-vault-btn" style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            padding: '10px 18px', background: 'var(--gradient-primary)',
-            border: 'none', borderRadius: '12px', color: 'white',
-            fontWeight: 600, fontSize: '13px', cursor: 'pointer',
-            boxShadow: '0 0 20px rgba(124,58,237,0.2)',
-          }}>
-            <Upload size={15} /> Add to Vault
-          </button>
-          <button id="lock-vault-btn" onClick={lockVault}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              padding: '10px 14px', background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '12px', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px',
-              transition: 'all 0.2s',
-            }}>
-            <LockIcon size={15} /> Lock
-          </button>
-        </div>
-      </div>
-
-      {/* Info Banner */}
-      <div style={{
-        background: 'rgba(124,58,237,0.04)', border: '1px solid rgba(124,58,237,0.1)',
-        borderRadius: '16px', padding: '16px 20px',
-        display: 'flex', alignItems: 'center', gap: '14px',
-        marginBottom: '24px', fontSize: '13px', color: 'var(--text-secondary)',
-      }}>
-        <div style={{
-          width: '32px', height: '32px', borderRadius: '10px',
-          background: 'rgba(124,58,237,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0,
-        }}>
-          <Fingerprint size={16} style={{ color: 'var(--accent-violet)' }} />
-        </div>
-        Files are encrypted with AES-256-GCM on your device before upload. Server never sees plaintext.
-        Vault is shared between you and 🌸 Priya Sharma.
-      </div>
-
-      {/* Category tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '22px' }}>
-        {[
-          { label: 'All', icon: null },
-          { label: 'Photos', icon: <Image size={13} /> },
-          { label: 'Videos', icon: <Video size={13} /> },
-          { label: 'Voice Notes', icon: <Mic size={13} /> },
-        ].map(({ label, icon }) => (
-          <button key={label} id={`vault-tab-${label.toLowerCase()}`}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '8px 16px', borderRadius: '10px', fontSize: '13px', fontWeight: 500,
-              background: label === 'All' ? 'rgba(124,58,237,0.1)' : 'rgba(255,255,255,0.03)',
-              border: `1px solid ${label === 'All' ? 'rgba(124,58,237,0.25)' : 'rgba(255,255,255,0.06)'}`,
-              color: label === 'All' ? 'var(--accent-violet)' : 'var(--text-secondary)',
-              cursor: 'pointer', transition: 'all 0.2s',
-            }}>
-            {icon} {label}
-          </button>
-        ))}
-      </div>
-
-      {/* Files Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: '16px' }}>
-        {MOCK_VAULT_ITEMS.map((item) => (
-          <div key={item.id} id={`vault-item-${item.id}`}
-            style={{
-              background: 'rgba(12,17,35,0.8)', backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '16px', overflow: 'hidden',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(124,58,237,0.25)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.4), 0 0 20px rgba(124,58,237,0.05)'; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.04)'; }}>
-            {/* Thumbnail */}
-            <div style={{
-              height: '130px',
-              background: item.type === 'image'
-                ? 'linear-gradient(135deg, #4c1d95, #1e3a8a)'
-                : item.type === 'video'
-                  ? 'linear-gradient(135deg, #1e3a8a, #0f766e)'
-                  : 'linear-gradient(135deg, #27272a, #18181b)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '38px',
-              position: 'relative',
-            }}>
-              {item.type === 'image' ? '🖼️' : item.type === 'video' ? '🎬' : '🎤'}
-              <div style={{
-                position: 'absolute', top: '10px', right: '10px',
-                padding: '3px 8px', borderRadius: '6px', fontSize: '10px',
-                background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)',
-                color: 'var(--accent-emerald)', fontWeight: 600,
-                border: '1px solid rgba(16,185,129,0.2)',
-              }}>
-                🔒
+    <div className="flex-1 overflow-y-auto w-full bg-slate-50 dark:bg-slate-900/30 p-4 md:p-8 animate-in fade-in duration-500">
+      <div className="max-w-7xl mx-auto space-y-8 pb-20">
+        
+        {/* Header matching Stitch Dashboard style */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+           <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-cobalt-accent text-white flex items-center justify-center shadow-lg shadow-primary/20">
+                 <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>shield_lock</span>
               </div>
+              <div>
+                 <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Secure Vault</h1>
+                 <div className="flex items-center gap-2 mt-1">
+                    <span className="flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+                    <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Tunnel Active</p>
+                 </div>
+              </div>
+           </div>
+           
+           <div className="flex items-center gap-3">
+              <button className="flex justify-center items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-primary to-cobalt-accent text-white rounded-xl font-bold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all hover:-translate-y-0.5" onClick={() => {}}>
+                  <Upload size={16} strokeWidth={3} />
+                  <span>Upload Secure</span>
+              </button>
+              <button className="flex justify-center items-center gap-2 px-4 py-2.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-xl font-bold border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all shadow-sm" onClick={lockVault}>
+                  <span className="material-symbols-outlined text-[18px]">lock_reset</span>
+                  <span className="hidden sm:inline">Lock Vault</span>
+              </button>
+           </div>
+        </div>
+
+        {/* Global info banner */}
+        <div className="bg-white dark:bg-slate-800/60 p-4 md:p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
+           <div className="flex items-center gap-4">
+              <div className="size-10 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 border border-emerald-500/20">
+                 <span className="material-symbols-outlined text-xl">security</span>
+              </div>
+              <div>
+                 <p className="text-sm font-bold text-slate-800 dark:text-slate-200">End-to-End Encryption Active</p>
+                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5 max-w-xl">All files are encrypted with AES-256 on your device before upload. We cannot read your files.</p>
+              </div>
+           </div>
+           <div className="flex-shrink-0 w-full md:w-64 bg-slate-100 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div className="flex justify-between items-center mb-1.5">
+                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Storage</span>
+                 <span className="text-[10px] font-bold text-primary">64%</span>
+              </div>
+              <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                 <div className="h-full bg-gradient-to-r from-primary to-cobalt-accent w-[64%] rounded-full shadow-[0_0_5px_rgba(36,99,235,0.5)]"></div>
+              </div>
+           </div>
+        </div>
+
+        {/* Storage Grid from Stitch HTML */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* Secure Storage Card */}
+            <div className="bg-white dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-md flex flex-col gap-4 group hover:border-blue-500/50 transition-colors cursor-pointer relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-bl-[100px] pointer-events-none group-hover:scale-110 transition-transform"></div>
+                <div className="flex items-center justify-between z-10">
+                    <div className="size-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-500/20 flex items-center justify-center shadow-inner">
+                        <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>hard_drive</span>
+                    </div>
+                    <span className="material-symbols-outlined text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-colors">more_vert</span>
+                </div>
+                <div className="z-10">
+                    <h3 className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">Secure Storage</h3>
+                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">1,240 encrypted files</p>
+                </div>
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-700/50 flex gap-2 z-10 mt-auto">
+                    <span className="px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 uppercase tracking-widest">PDF</span>
+                    <span className="px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 uppercase tracking-widest">DOCX</span>
+                    <span className="px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 uppercase tracking-widest">ZIP</span>
+                </div>
             </div>
-            <div style={{ padding: '14px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {item.name}
-              </div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between' }}>
-                <span>{item.size}</span>
-                <span style={{
-                  padding: '1px 6px', borderRadius: '4px', fontSize: '10px',
-                  background: 'rgba(255,255,255,0.04)',
-                }}>{item.type}</span>
-              </div>
-            </div>
-          </div>
-        ))}
 
-        {/* Upload Placeholder */}
-        <div style={{
-          background: 'rgba(255,255,255,0.01)',
-          border: '2px dashed rgba(255,255,255,0.08)',
-          borderRadius: '16px', height: '200px',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          gap: '10px', cursor: 'pointer', color: 'var(--text-muted)',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(124,58,237,0.3)'; (e.currentTarget as HTMLElement).style.color = 'var(--accent-violet)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'; }}>
-          <Upload size={24} />
-          <span style={{ fontSize: '13px' }}>Upload & Encrypt</span>
+            {/* Media Vault Card */}
+            <div className="bg-white dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-md flex flex-col gap-4 group hover:border-purple-500/50 transition-colors cursor-pointer relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-bl-[100px] pointer-events-none group-hover:scale-110 transition-transform"></div>
+                <div className="flex items-center justify-between z-10">
+                    <div className="size-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 border border-purple-500/20 flex items-center justify-center shadow-inner">
+                        <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>photo_camera</span>
+                    </div>
+                    <span className="material-symbols-outlined text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-colors">more_vert</span>
+                </div>
+                <div className="z-10">
+                    <h3 className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">Media & Photos</h3>
+                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">452 hidden items</p>
+                </div>
+                <div className="flex -space-x-3 mt-auto pt-2 z-10">
+                    <div className="size-10 rounded-lg border-2 border-white dark:border-slate-800 bg-slate-200 overflow-hidden shadow-sm">
+                        <img className="w-full h-full object-cover blur-[2px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxGYOD6Oa-NkF20hLjpjEGLr2jH7kLIghW5dORbYdE-5u5FSqBN7j6eoEIYg109G7-g92X2iVs2MTmxp6gslPDYQdlDrFD-OyWTcJ_AJjqXbkizX2vEZTtSY8rTZk4MaYK1KYsc73vlhFYpCIvlAG3TjlAu7ijWmbnxWeQos7DBdpcOPsBjr9_Zr4l8fIObLdtggj4knrbGGlXtJlVuzvoHgFyN7GQRS1V_sM9Uqbb31ZsyVhDhqbIyBz7BMHfD4k52MypEAtB4RM" alt="Media" />
+                    </div>
+                    <div className="size-10 rounded-lg border-2 border-white dark:border-slate-800 bg-slate-200 overflow-hidden shadow-sm">
+                        <img className="w-full h-full object-cover blur-[2px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM75lOgitSIRSLoGaZPK2Zr9-IHP26y-pld8qo3P4Xx9CATXFrwb4PPvziYK2cjDeRQjIBVX8MmcLXhltY4-VTV7vaklw4XggdccU-DQTpSxTX-pu2ilAHeIRMH9RWHjpzGOmhmVrkEPmXW7c5sRdD1ZdvSqgPyhH_Vteh4LmI6Qv6HZ9hlLhPkz_kMKEdKGBgKbGLVxlf52u1-kvXm9_bgkU3Yy5FwFR7HWRHEGDNDHgZ2wMHEsDQf0fDUtlWXrOFqJJurV-ZpPo" alt="Media" />
+                    </div>
+                    <div className="size-10 rounded-lg border-2 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-700 overflow-hidden flex items-center justify-center text-[10px] font-bold text-slate-600 dark:text-slate-300 shadow-sm z-10">
+                        +450
+                    </div>
+                </div>
+            </div>
+
+            {/* Password Manager Card */}
+            <div className="bg-white dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-md flex flex-col gap-4 group hover:border-amber-500/50 transition-colors cursor-pointer relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-bl-[100px] pointer-events-none group-hover:scale-110 transition-transform"></div>
+                <div className="flex items-center justify-between z-10">
+                    <div className="size-12 rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center justify-center shadow-inner">
+                        <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>key_visualizer</span>
+                    </div>
+                    <span className="material-symbols-outlined text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200 transition-colors">more_vert</span>
+                </div>
+                <div className="z-10">
+                    <h3 className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">Passwords</h3>
+                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">82 stored credentials</p>
+                </div>
+                <div className="space-y-2 mt-auto pt-4 z-10 w-full">
+                    <div className="h-2 w-full bg-slate-200 dark:bg-slate-700/80 rounded-full overflow-hidden">
+                       <div className="h-full w-[40%] bg-gradient-to-r from-amber-400 to-amber-600 rounded-full animate-pulse"></div>
+                    </div>
+                    <div className="h-2 w-2/3 bg-slate-200 dark:bg-slate-700/80 rounded-full opacity-50"></div>
+                </div>
+            </div>
+
         </div>
+
+        {/* Individual File Items */}
+        <div className="mt-8">
+           <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-lg">Recent Files</h3>
+              <div className="flex gap-2">
+                 {['All', 'Photos', 'Documents'].map(tab => (
+                    <button key={tab} className={`px-3 py-1.5 text-xs font-bold uppercase tracking-widest rounded-lg transition-colors border ${tab==='All' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-200 dark:hover:bg-slate-800'}`}>
+                       {tab}
+                    </button>
+                 ))}
+              </div>
+           </div>
+           
+           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {MOCK_VAULT_ITEMS.map((item) => (
+                 <div key={item.id} className="bg-white dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700/60 overflow-hidden shadow-sm hover:shadow-md hover:border-primary/40 transition-all cursor-pointer group">
+                    <div className={`h-28 sm:h-32 flex items-center justify-center text-4xl relative ${
+                       item.type === 'image' ? 'bg-gradient-to-br from-indigo-900 to-purple-900' :
+                       item.type === 'video' ? 'bg-gradient-to-br from-blue-900 to-cyan-900' :
+                       'bg-gradient-to-br from-slate-800 to-zinc-900'
+                    }`}>
+                       <span className="group-hover:scale-110 transition-transform drop-shadow-xl">{item.type === 'image' ? '🖼️' : item.type === 'video' ? '🎬' : '🎤'}</span>
+                       
+                       {/* Lock overlay badge */}
+                       <div className="absolute top-2 right-2 px-2 py-1 bg-black/40 backdrop-blur-md rounded border border-white/10 flex items-center gap-1 text-[10px] text-emerald-400 font-bold tracking-wider">
+                          <span className="material-symbols-outlined text-[12px]">lock</span>
+                       </div>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-transparent">
+                       <p className="font-bold text-sm text-slate-900 dark:text-white truncate" title={item.name}>{item.name}</p>
+                       <div className="flex items-center justify-between mt-1">
+                          <p className="text-xs font-medium text-slate-500">{item.size}</p>
+                          <span className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700">
+                             {item.type}
+                          </span>
+                       </div>
+                    </div>
+                 </div>
+              ))}
+
+              <div className="rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-800/20 hover:bg-slate-100 dark:hover:bg-slate-800/40 hover:border-primary/50 transition-all cursor-pointer flex flex-col items-center justify-center gap-3 min-h-[160px] text-slate-400 hover:text-primary">
+                 <Upload size={28} />
+                 <span className="text-sm font-bold">Upload Secure</span>
+              </div>
+           </div>
+        </div>
+
       </div>
     </div>
   );
