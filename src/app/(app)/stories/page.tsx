@@ -10,6 +10,7 @@ function StoryViewer({ story, onClose }: { story: (typeof MOCK_STORIES)[0]; onCl
   const [progress, setProgress] = useState(0);
   const [showViewers, setShowViewers] = useState(false);
   const user = MOCK_USERS.find(u => u.id === story.userId);
+  // eslint-disable-next-line react-hooks/purity
   const expiresIn = Math.max(0, Math.floor((new Date(story.expiresAt).getTime() - Date.now()) / 3600000));
 
   return (

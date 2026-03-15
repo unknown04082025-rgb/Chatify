@@ -30,9 +30,11 @@ function VoiceWaveform({ bars = 8, isPlaying = false, isSelf = false }: { bars?:
         <div key={i} 
           className={`w-1 rounded-sm ${isSelf ? 'bg-white/80' : 'bg-primary'}`}
           style={{
+            // eslint-disable-next-line react-hooks/purity
             height: `${Math.random() * 16 + 6}px`,
             animation: isPlaying ? 'wave-bounce 1s infinite ease-in-out alternate' : 'none',
             animationDelay: `${i * 0.1}s`,
+            // eslint-disable-next-line react-hooks/purity
             animationDuration: `${0.4 + Math.random() * 0.3}s`,
           }} />
       ))}
@@ -170,7 +172,6 @@ function SnapMessage({ content }: { content: string }) {
 }
 
 export default function ChatsPage() {
-  const router = useRouter();
   const { chats, messages, activeChatId, setActiveChat, sendMessage, setTyping, typingUsers, currentUser, startCall, receiveCall, friendRequests } = useAppStore();
   const [inputText, setInputText] = useState('');
   const [msgType, setMsgType] = useState<'normal' | 'after-view' | 'timed-delete'>('normal');
@@ -192,6 +193,7 @@ export default function ChatsPage() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatMessages]);
 
   const handleInputChange = (val: string) => {

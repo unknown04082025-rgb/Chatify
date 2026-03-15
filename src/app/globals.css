@@ -2,7 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-@theme {
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
+
+:root {
   --color-primary: #2463eb;
   --color-background-light: #f6f6f8;
   --color-background-dark: #111621;
@@ -13,6 +17,8 @@
   --radius-lg: 2rem;
   --radius-xl: 3rem;
   --radius-full: 9999px;
+
+  --nav-height: 64px;
 }
 
 @layer components {
@@ -67,10 +73,7 @@ body {
   padding: 0;
 }
 
-/* Basic utility overrides preserving old classes where strictly needed for other pages we haven't touched yet */
-:root {
-  --nav-height: 64px;
-}
+/* Global resets for the app */
 
 .status-available {
   color: #10b981;

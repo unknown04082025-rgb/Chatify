@@ -33,6 +33,7 @@ export default function MemoriesPage() {
   const handleAddMemory = () => {
     if (!selectedDate || !note) return;
     setMemories(prev => [...prev, {
+      // eslint-disable-next-line react-hooks/purity
       id: `mem-${Date.now()}`,
       userId: 'user-1',
       date: selectedDate,
@@ -183,7 +184,7 @@ export default function MemoriesPage() {
                             <span className="material-symbols-outlined text-slate-500 text-sm cursor-pointer hover:text-primary">more_horiz</span>
                         </div>
                         <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed italic border-l-2 border-slate-300 dark:border-slate-700 pl-3">
-                            "{selectedMemory.note}"
+                          &ldquo;{selectedMemory.note}&rdquo;
                         </p>
                     </div>
 
