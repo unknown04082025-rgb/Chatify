@@ -20,15 +20,7 @@ export default function HomePage() {
   }, [isAuthenticated, currentUser, router]);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'var(--bg-primary)',
-      flexDirection: 'column',
-      gap: '20px',
-    }}>
+    <div className="min-h-screen flex items-center justify-center flex-col gap-5">
       <div style={{
         width: '60px',
         height: '60px',

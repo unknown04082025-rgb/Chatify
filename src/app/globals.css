@@ -7,9 +7,18 @@
 /* @tailwind utilities; */
 
 :root {
-  --color-primary: #2463eb;
+  --color-primary: #3713ec;
   --color-background-light: #f6f6f8;
   --color-background-dark: #111621;
+  
+  --bg-primary: #111621;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --bg-glass: rgba(30, 41, 59, 0.4);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --shadow-glow: 0 0 20px rgba(55, 19, 236, 0.3);
   
   --font-display: 'Inter', sans-serif;
   
@@ -19,6 +28,8 @@
   --radius-full: 9999px;
 
   --nav-height: 64px;
+
+  --gradient-primary: linear-gradient(135deg, #3713ec 0%, #2563eb 100%);
 }
 
 @layer components {

@@ -44,14 +44,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px',
-      background: 'radial-gradient(circle at center, var(--bg-secondary) 0%, var(--bg-primary) 100%)',
-    }}>
+    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
       <div style={{
         width: '100%',
         maxWidth: '420px',

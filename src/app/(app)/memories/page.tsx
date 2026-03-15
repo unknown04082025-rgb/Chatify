@@ -50,28 +50,12 @@ export default function MemoriesPage() {
   const padPrevMonthDays = Array.from({ length: firstDay });
 
   return (
-    <div className="flex-1 w-full bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-full flex flex-col items-center justify-start overflow-y-auto">
-      <style dangerouslySetInnerHTML={{__html: `
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .active-glow {
-            box-shadow: 0 0 15px rgba(36, 99, 235, 0.4);
-        }
-        .dark .bg-glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .bg-glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(0, 0, 0, 0.05); }
-      `}} />
+    <div className="flex-1 w-full min-h-full flex flex-col items-center justify-start overflow-y-auto">
+
       
       <div className="w-full max-w-4xl pb-24 animate-in fade-in duration-500">
         {/* Top Header */}
-        <header className="sticky top-0 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-4 flex items-center justify-between border-b border-slate-200 dark:border-white/10">
+        <header className="sticky top-0 z-40 bg-white/10 dark:bg-slate-900/10 backdrop-blur-md px-4 py-4 flex items-center justify-between border-b border-slate-200 dark:border-white/10">
             <div className="flex items-center gap-3">
                 <div className="w-10 h-10 flex items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-cobalt-accent text-white shadow-lg shadow-primary/20">
                     <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_month</span>

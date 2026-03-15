@@ -38,11 +38,11 @@ export default function VaultPage() {
 
   if (!vaultUnlocked) {
     return (
-      <div className="flex-1 flex items-center justify-center p-6 min-h-[calc(100vh-140px)] relative overflow-hidden bg-slate-50 dark:bg-slate-900/30">
+      <div className="flex-1 flex items-center justify-center p-6 min-h-[calc(100vh-140px)] relative overflow-hidden">
         
         {/* Unlock/Identity Section exactly from Stitch Template */}
         <div className={`relative p-10 md:p-12 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-950 text-center flex flex-col items-center justify-center overflow-hidden border border-slate-700 shadow-2xl max-w-md w-full animate-in fade-in zoom-in-95 duration-500 ${shaking ? 'animate-[shake_0.4s_ease-in-out]' : ''}`}>
-            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #2463eb 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
+            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #3713ec 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
             
             <div className="relative group cursor-default mb-2">
                 <div className="absolute -inset-4 bg-primary/20 rounded-full blur-xl group-hover:bg-primary/30 transition-all duration-700"></div>
@@ -94,7 +94,7 @@ export default function VaultPage() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto w-full bg-slate-50 dark:bg-slate-900/30 p-4 md:p-8 animate-in fade-in duration-500">
+    <div className="flex-1 overflow-y-auto w-full p-4 md:p-8 animate-in fade-in duration-500">
       <div className="max-w-7xl mx-auto space-y-8 pb-20">
         
         {/* Header matching Stitch Dashboard style */}

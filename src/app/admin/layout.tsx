@@ -28,7 +28,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!isAuthenticated || currentUser?.type !== 'admin') return null;
 
   return (
-    <div className="flex h-screen w-full bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-hidden">
+    <div className="flex h-screen w-full font-display antialiased overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 backdrop-blur-xl flex flex-col h-full">
         <div className="flex flex-col h-full p-6">
@@ -49,7 +49,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link key={href} href={href} 
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                     active 
-                    ? 'bg-primary/10 text-primary font-bold shadow-[inset_4px_0_0_#2463eb]' 
+                    ? 'bg-primary/10 text-primary font-bold shadow-[inset_4px_0_0_var(--color-primary)]' 
                     : 'text-slate-600 dark:text-slate-400 font-semibold hover:bg-slate-100 dark:hover:bg-slate-800'
                   }`}
                 >
@@ -86,7 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col overflow-hidden relative">
-        <div className="absolute inset-0 bg-gradient-mesh opacity-30 pointer-events-none -z-10" />
+        <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/20 pointer-events-none -z-10" />
         {children}
       </main>
     </div>

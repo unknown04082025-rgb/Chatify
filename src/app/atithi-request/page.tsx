@@ -21,11 +21,7 @@ export default function AtithiRequestPage() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh', background: 'var(--bg-primary)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '24px', position: 'relative', overflow: 'hidden',
-    }}>
+    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
       <div style={{
         position: 'absolute', top: '-80px', right: '-80px',
         width: '400px', height: '400px', borderRadius: '50%',

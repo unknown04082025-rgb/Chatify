@@ -10,7 +10,7 @@ export default function AdminActivityPage() {
       case 'logout': return <LogOut size={14} color="#f87171" />;
       case 'otp-sent': return <KeyRound size={14} color="#f59e0b" />;
       case 'otp-verified': return <CheckCircle2 size={14} color="#3b82f6" />;
-      default: return <Activity size={14} color="var(--text-muted)" />;
+      default: return <Activity size={14} className="text-[var(--text-muted)]" />;
     }
   };
 

@@ -38,10 +38,10 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-x-hidden p-4">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px]"></div>
-        <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"></div>
+      {/* Background Decorative Elements - Refined for Mesh Gradient */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 opacity-30">
+        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"></div>
+        <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
       </div>
       
       {/* Top Navigation (Mobile/Simple) */}
@@ -138,7 +138,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-slate-700"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background-dark px-2 text-slate-500 font-medium">Or continue with</span>
+              <span className="bg-transparent px-2 text-slate-500 font-medium">Or continue with</span>
             </div>
           </div>
 

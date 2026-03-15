@@ -255,10 +255,9 @@ export default function ChatsPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-var(--nav-height))] w-full bg-background-light dark:bg-[#0b0e14]">
+    <div className="flex h-[calc(100vh-var(--nav-height))] w-full">
       
-      {/* Mesh Background for empty state / transparency */}
-      <div className="absolute inset-0 bg-gradient-mesh opacity-30 pointer-events-none -z-10" />
+
 
       <ConfirmDialog
         isOpen={confirmCall !== null}
@@ -547,7 +546,7 @@ export default function ChatsPage() {
         );
       })() : (
         <main className="hidden md:flex flex-1 flex-col items-center justify-center p-8 relative">
-          <div className="absolute inset-0 bg-gradient-mesh opacity-20 z-0"></div>
+
           <div className="z-10 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-500">
             <div className="size-24 rounded-3xl bg-slate-800/40 border border-white/10 flex items-center justify-center text-5xl mb-6 shadow-2xl backdrop-blur-xl relative">
               <span className="material-symbols-outlined text-primary text-[48px]" style={{fontVariationSettings: "'FILL' 1"}}>chat</span>

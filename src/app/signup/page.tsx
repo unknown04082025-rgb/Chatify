@@ -43,7 +43,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-gradient-mesh overflow-x-hidden">
+    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
       {/* Header Nav */}
       <div className="flex items-center p-4 justify-between lg:max-w-md lg:mx-auto w-full">
         {step > 1 ? (
@@ -69,7 +69,7 @@ export default function SignupPage() {
           {/* Progress */}
           <div className="flex gap-2 mt-6">
             {[1,2,3].map(s => (
-              <div key={s} className={`h-1 flex-1 rounded-full transition-all ${s <= step ? 'bg-primary' : 'bg-slate-700/50'}`} />
+              <div key={s} className={`h-1.5 flex-1 rounded-full transition-all ${s <= step ? 'bg-primary shadow-[0_0_8px_rgba(55,19,236,0.5)]' : 'bg-slate-700/30'}`} />
             ))}
           </div>
         </div>

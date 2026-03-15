@@ -18,7 +18,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (!isAuthenticated || !currentUser) return null;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', position: 'relative' }}>
+    <div className="min-h-screen relative">
       {/* Background Orbs */}
       <div style={{
         position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden',
@@ -41,11 +41,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Main Content */}
-      <main style={{
-        position: 'relative', zIndex: 1,
-        paddingTop: 'var(--nav-height)',
-        minHeight: '100vh',
-      }} className="main-content">
+      <main className="relative z-10 pt-[var(--nav-height)] min-h-screen main-content">
         {children}
       </main>
 

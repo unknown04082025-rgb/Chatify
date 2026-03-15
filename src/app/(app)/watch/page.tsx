@@ -48,7 +48,7 @@ export default function WatchPage() {
 
   if (!inRoom) {
      return (
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-full">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 min-h-full">
            <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pt-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -105,20 +105,15 @@ export default function WatchPage() {
 
   // Exact Stitch HTML structure for Watch Cinema translated to React
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased relative">
+    <div className="flex h-full w-full flex-col overflow-hidden antialiased relative">
       <style dangerouslySetInnerHTML={{__html: `
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
         .video-gradient {
             background: linear-gradient(to top, rgba(17, 22, 33, 1) 0%, rgba(17, 22, 33, 0) 100%);
         }
       `}} />
       
       {/* Header */}
-      <div className="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between z-10 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex items-center p-4 pb-2 justify-between z-10 border-b border-slate-200 dark:border-slate-800">
         <div onClick={() => setInRoom(false)} className="text-slate-900 dark:text-slate-100 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer">
           <span className="material-symbols-outlined">arrow_back</span>
         </div>
@@ -230,7 +225,7 @@ export default function WatchPage() {
       </div>
 
       {/* Chat Interaction Area */}
-      <div className="flex-1 w-full flex flex-col bg-background-light dark:bg-background-dark max-h-full">
+      <div className="flex-1 w-full flex flex-col max-h-full">
         <div className="px-4 py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0">
           <span className="text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">Live Chat</span>
           <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">
